@@ -1,0 +1,30 @@
+Mother May I 7.x-1.5, 2014-04-01
+--------------------------------------
+#2226657 by dwillcox: Move hint wording up above entry box where it belongs.
+
+Mother May I 7.x-1.4, 2014-03-14
+--------------------------------------
+#2208487 by dwillcox: Bypass secret word if user is already logged in.
+
+Mother May I 7.x-1.3, 2013-09-10
+--------------------------------------
+#2084261 by dwillcox: Include failed secret word attempt in log.
+
+Mother May I 7.x-1.1, 2012-12-13
+--------------------------------------
+#1864392 by dwillcox: Add missing hook_permission().
+
+Mother May I 7.x-1.0, 2012-11-10
+--------------------------------------
+#6657212 by dwillcox: Fix error when "blank field" not selected,
+                      and fix so the hint shows up correctly.
+#1809424 by dwillcox: Support secret word as regular expression.
+#1805876 by dwillcox: Add option to add textfield that must be blank.
+#1794414 by dwillcox: Drupal 7 version.
+
+
+Mother May I 6.x-1.0-beta1, 2012-09-10
+------------------------------------
+#1779352 by dwillcox: Don't check secret word if something else already failed.
+#1778796 by dwillcox: Mostly cosmetic issues from dev version.
+#1778954 by dwillcox: Don't add secret word to saved user data block.

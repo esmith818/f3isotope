@@ -1,0 +1,217 @@
+
+@media screen and (max-width: 1152px) {
+
+  #wrapper { max-width:960px; }
+
+  #top-area .column:last-child{  margin-right: 0; }
+  
+  #copyright{ padding: 0 10px; }
+}
+
+@media screen and (max-width: 960px) {
+
+  .content-sidebar-wrap,
+  #content, #sidebar-first,
+  #sidebar-second {
+    clear:both;
+    float:none;
+    width:100% !important;
+  }
+  
+  #sidebar-first, #sidebar-second,
+  #head, #foot {
+    padding:0 3.52%;
+  }
+  
+  #top-area .column{ width: 32%; }
+
+  #sidebar-first, #sidebar-second, #head, #foot{ padding: 0 1.5%; }
+
+  .region-front-welcome{ margin: 1% 2%; }
+
+  .block{ margin-bottom: 2%; }
+
+  .content-sidebar-wrap #content{ margin: 0; }
+
+  #footer_wrapper, #top-area { padding: 0 15px; }
+
+  #post-content{ margin: 10px; }
+}
+
+@media screen and (max-width: 640px) {
+
+  .feature .fa { padding: 5px; height: 65px; }
+
+  #logo { text-align: center; width: 100%; }
+
+  #copyright{ padding: 10px 0;}
+
+  body { margin-top: 0; }
+  
+  .top_left, .top_right, .search_block, .region-user-menu{ width: 100%; }
+
+  #logo a img{ display: inline-block; }
+
+  #footer p{ margin: 0; }
+
+  #copyright p{ margin: 10px 0; float: left; width: 100%; }
+
+  .front .content-sidebar-wrap{ margin: 0; }
+
+  .theme-default .nivo-controlNav{ padding-top: 10px; }
+
+  .region-front-welcome{ padding: 10px; }
+  
+  #site-title { padding-top:18px; }
+  
+  #site-description { padding-bottom:18px; }
+
+  #main-menu ul { display:none; }
+  
+  #main-menu li ul { position:static; border: 0; }
+  
+  #main-menu li ul ul { margin:0 !important; border: 0; }
+  
+  #main-menu ul,
+  #main-menu li { float:none; max-width:100%; }
+
+  #main-menu{ border:0; }
+  
+  #main-menu a {
+    width:100%;
+    padding: 8px 11px;
+    color: #fff;
+    border-radius: 0;
+    text-align: center;
+    border-bottom: 1px solid #1e262d;
+  }
+
+  #main-menu li a.active, .black #main-menu li a.active{ padding: 10px 0; border-top: 0; }
+
+  #main-menu li li a { text-align:center; font-size: 15px; }
+  
+  #main-menu li:hover > ul,
+  #main-menu li li:hover > ul,
+  #main-menu li li li:hover > ul {
+    display:none;
+  }
+  
+  .drop-down-toggle { display:block; }
+
+  .menu_wrapper{ margin: 0; }
+
+  #main-menu .nav-toggle {
+    display: block;
+    font-size: 15px;
+    font-weight: normal;
+    color: white;
+    margin: 0;
+    padding: 12px;
+    letter-spacing: 1px;
+    text-align: center;
+    background: url(../images/mob-menu.png) right no-repeat #1D1D1D;
+  }
+
+  #main-menu ul.menu li{
+    margin: 0;
+    width: 100%;
+  }
+
+  .content-sidebar-wrap,
+  #sidebar-first,
+  #sidebar-second {
+    float:none;
+    width:auto;
+  }
+
+  .content-sidebar-wrap #content {
+    float: left;
+    width:auto;
+  }
+  
+  #sidebar-first .block,
+  #sidebar-second .block,
+  #footer-area .column,
+  #top-area .column {
+    float:none !important;
+    width:auto !important;
+    margin-left:0;
+  }
+  
+  #sidebar-first {
+    clear:both;
+  }
+  
+  #footer-area .column,
+  #top-area .column {
+    margin:10px;
+  }
+
+  #top-area .column:first-child,
+  #footer-area .column:first-child{
+    margin: 10px;
+  }
+  
+  .copyright, .credits {
+    float: none;
+    text-align: left;
+    text-align: center;
+  }
+
+  #footer_wrapper, #top-area { padding: 0; }
+
+  .theme-default .nivo-caption{ display: none !important; }
+
+  #logo{ margin: 8px 0; text-align: center; }
+
+  #logo img{ text-align: center; }
+
+  #site-title{
+    display: inline-block;
+    padding: 0;
+    margin-top: 0;
+    width: 100%;
+  }
+
+  #site-description{
+    padding-bottom: 5px;
+    width: 100%;
+    text-align: center;
+  }
+
+  #site-title a{ width: 100%; text-align: center; }
+
+  .node { margin: 10px 0; }
+
+  .region-front-welcome .block h2{ padding: 5px 0; }
+
+  .nivo-directionNav{ display: none !important; }
+
+  .region-front-welcome, .region-highlights p{ font-size: 13px; }
+
+  .region-highlights h1 { font-size: 18px; }
+
+  .social-icons{ margin-top: 5%; }
+
+  /*Color Scheme*/
+
+  .blue #main-menu li a.active,
+  .green #main-menu li a.active,
+  .pink #main-menu li a.active,
+  .black #main-menu li a.active { border-color: #1E262D; }
+
+}
+
+@media screen and (max-width: 440px) {
+
+  .social-icons{ position: inherit; width: 100%; }
+
+  .social-icons ul{ text-align: center; }
+
+  .block-menu ul{ float: none; text-align: center; }
+
+  input.form-text, select.form-select { width: 93%; }
+
+  textarea.form-textarea { width: 100% }
+
+}

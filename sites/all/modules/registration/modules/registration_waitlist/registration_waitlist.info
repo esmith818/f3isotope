@@ -1,0 +1,15 @@
+name = Registration Wait list
+description = Provides a special registration state that acts as a wait list.
+package = Registration
+core = 7.x
+
+dependencies[] = registration
+
+files[] = registration_waitlist.test
+
+; Information added by Drupal.org packaging script on 2015-04-04
+version = "7.x-1.4"
+core = "7.x"
+project = "registration"
+datestamp = "1428110897"
+

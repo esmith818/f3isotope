@@ -1,0 +1,206 @@
+<?php
+
+/**
+ * @file
+ * Primarily Drupal hooks and global API functions to manipulate slack invite.
+ *
+ * This is the main module file for Slack Invite.
+ */
+
+
+define('SLACK_INVITE_ALREADY_IN_TEAM', 'already_in_team');
+define('SLACK_INVITE_SENT_RECENTLY', 'sent_recently');
+define('SLACK_INVITE_ALREADY_INVITED', 'already_invited');
+
+/**
+ * Implements hook_menu().
+ */
+function slack_invite_menu() {
+  $items = array();
+
+  $items['admin/config/services/slack_invite'] = array(
+    'title' => 'Slack Invite',
+    'description' => 'Configure Slack Invite module.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('slack_invite_settings_form'),
+    'access arguments' => array('access administration pages'),
+  );
+
+  return $items;
+}
+
+/**
+ * Settings form for slack invite.
+ */
+function slack_invite_settings_form($form, &$form_state) {
+  $form['slack_invite_token'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Slack Web API Token',
+    '#description' => 'Enter the Web API token you get from your team domain.',
+    '#default_value' => variable_get('slack_invite_token', ''),
+    '#required' => TRUE,
+  );
+
+  $form['slack_invite_hostname'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Slack Domain Hostname',
+    '#description' => 'Enter your slack team domain (ex. if your domain is https://drupal.slack.com, you would enter "drupal" minus the quotations).',
+    '#default_value' => variable_get('slack_invite_hostname', ''),
+    '#required' => TRUE,
+  );
+
+  $form['slack_invite_channels'] = array(
+    '#type' => 'textfield',
+    '#title' => 'Slack Invite Channels',
+    '#description' => 'Enter any additional channels the user should be invited to. This is a 6 digit code.',
+    '#default_value' => variable_get('slack_invite_channels', ''),
+  );
+  return system_settings_form($form);
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function slack_invite_block_info() {
+  $blocks = array();
+  $blocks['slack-invite-send-request'] = array(
+    'info' => t('Send slack invite request'),
+  );
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function slack_invite_block_view($delta = '') {
+  $block = array();
+  if ($delta == 'slack-invite-send-request') {
+    $block['title'] = t('Request Slack invite');
+    $block['content'] = drupal_get_form('slack_invite_send_form');
+  }
+  return $block;
+}
+
+/**
+ * Form to send invite.
+ */
+function slack_invite_send_form($form, &$form_state) {
+  global $user;
+  $fname = '';
+  $lname = '';
+  $email = '';
+  if (user_is_logged_in()) {
+    $email = $user->mail;
+  }
+
+  $form['slack_fname'] = array(
+    '#type' => 'textfield',
+    '#title' => t('First name'),
+    //'#description' => t('Enter your first name.'),
+    '#default_value' => $fname,
+  );
+
+  $form['slack_lname'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Last name'),
+    //'#description' => t('Enter your last name.'),
+    '#default_value' => $lname,
+  );
+
+  $form['slack_email'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Email'),
+    '#description' => t('(read-only value matches account settings)'),
+    '#default_value' => $email,
+    //'#attributes' => array('readonly' => 'readonly'),
+    '#attributes' => array('disabled' => 'disabled'),
+  );
+
+  $form['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Send'),
+  );
+
+  if (module_exists('honeypot')) {
+    honeypot_add_form_protection($form, $form_state, array('honeypot', 'time_restriction'));
+  }
+  return $form;
+}
+
+/**
+ * Validates invite form values.
+ */
+function slack_invite_send_form_validate($form, &$form_state) {
+  if (!valid_email_address($form_state['values']['slack_email'])) {
+    form_set_error('slack_email', t('Enter email address in valid format (ex. example@example.com)'));
+  }
+}
+
+/**
+ * Submits invite form.
+ */
+function slack_invite_send_form_submit($form, &$form_state) {
+  $response = _slack_invite_send_invite($form_state['values']['slack_email'],$form_state['values']['slack_fname'],$form_state['values']['slack_lname']);
+  if ($response->code == 200) {
+    $data = drupal_json_decode($response->data);
+    if (!empty($data['ok'])) {
+      drupal_set_message(t('You will receive an email notification inviting you to join the slack team shortly.'));
+    }
+    else {
+      $message = '';
+      switch ($data['error']) {
+        case SLACK_INVITE_ALREADY_IN_TEAM:
+          $message = t('The user is already a member of the team');
+          break;
+
+        case SLACK_INVITE_SENT_RECENTLY:
+          $message = t('The user was recently sent an invitation.');
+          break;
+
+        case SLACK_INVITE_ALREADY_INVITED:
+          $message = t('The user is already invited.');
+          break;
+
+        default:
+          $message = $data['error'];
+          break;
+      }
+      drupal_set_message(t('There was an error sending your invite. Please contact the administrator with the following error details. The error message from slack was: @message', array('@message' => $message)));
+    }
+  }
+  else {
+    drupal_set_message(t('There was an error sending your invite. Please contact the administrator for more details.'));
+  }
+  $form_state['redirect'] = '<front>';
+}
+
+/**
+ * Sends slack invite to email address.
+ */
+function _slack_invite_send_invite($email,$fname,$lname) {
+  $team_hostname = variable_get('slack_invite_hostname', '');
+  $api_url = "https://{$team_hostname}.slack.com/api/users.admin.invite?t=" . time();
+
+  $data = array(
+    '_attempts' => 1,
+    'email' => $email,
+    'first_name' => $fname,
+    'last_name' => $lname,
+    'set_active' => 'true',
+    'token' => variable_get('slack_invite_token', ''),
+  );
+
+  $data['channels'] = variable_get('slack_invite_channels', '');
+  if (empty($data['channels'])) {
+    unset($data['channels']);
+  }
+
+  $data = drupal_http_build_query($data);
+  $options = array(
+    'method' => 'POST',
+    'headers' => array('Content-Type' => 'application/x-www-form-urlencoded'),
+    'data' => $data,
+  );
+
+  return drupal_http_request("{$api_url}", $options);
+}

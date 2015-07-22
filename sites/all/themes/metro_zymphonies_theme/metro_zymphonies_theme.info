@@ -1,0 +1,58 @@
+name = Metro Zymphonies Theme
+description = Metro Zymphonies Theme<br/>Developed by <a href="http://www.zymphonies.com">Zymphonies</a> & Designed by <a href="http://www.freebiezz.com">FreeBiezz</a>.<br/>Contact us for Drupal Design & Development <a href="mailto:info@zymphonies.com">info@zymphonies.com</a>
+core = 7.x
+
+engine = phptemplate
+
+stylesheets[all][] = css/font-awesome.css
+stylesheets[all][] = css/style.css
+stylesheets[all][] = css/media.css
+
+scripts[] = js/custom.js
+
+regions[user_menu]  	 = User menu region
+regions[slideshow]       = Slideshow region
+regions[front_welcome]   = Front welcome region
+regions[top_first]       = First top region
+regions[top_second]      = Second top region
+regions[top_third]       = Third top region
+regions[sidebar_first]   = First sidebar region
+regions[sidebar_second]  = Second sidebar region
+regions[content]         = Content region
+regions[highlights]   	 = Highlights region
+regions[bottom_widget_1] = First bottom region
+regions[bottom_widget_2] = Second bottom region
+regions[bottom_widget_3] = Third bottom region
+regions[footer_first]    = First footer region
+regions[footer_second]   = Second footer region
+regions[footer_third]    = Third footer region
+regions[footer_forth]    = Forth footer region
+
+features[] = logo
+features[] = name
+features[] = slogan
+features[] = node_user_picture
+features[] = comment_user_picture
+features[] = comment_user_verification
+features[] = favicon
+features[] = main_menu
+features[] = secondary_menu
+
+settings[color_scheme] = Color
+
+settings[breadcrumbs]  = 1
+settings[social_links]  = 1
+settings[twitter_url] = "https://twitter.com/zymphonies"
+settings[facebook_url] = "https://www.facebook.com/zymphonies"
+settings[gplus_profile_url] = "https://plus.google.com/u/0/115285675336265767735/"
+settings[linkedin_profile_url] = "https://www.linkedin.com/company/zymphonies"
+settings[pinterest_profile_url] = "http://www.pinterest.com/zymphonies/"
+settings[youtube_profile_url] = "http://www.youtube.com"
+
+
+; Information added by Drupal.org packaging script on 2015-03-19
+version = "7.x-1.1"
+core = "7.x"
+project = "metro_zymphonies_theme"
+datestamp = "1426791486"
+

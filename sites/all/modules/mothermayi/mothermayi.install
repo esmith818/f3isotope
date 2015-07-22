@@ -1,0 +1,24 @@
+<?php
+/**
+ * @file
+ * Install routines for mothermayi module.
+ */
+
+/**
+ * Implements hook_install().
+ *
+ * We really don't have anything to do.
+ */
+function mothermayi_install() {
+}
+
+/**
+ * Implements of hook_uninstall().
+ *
+ * Remove any variables.
+ */
+function mothermayi_uninstall() {
+  foreach (array('secret_word', 'secret_hint', 'weight', 'filter') as $name) {
+    variable_del("mothermayi_$name");
+  }
+}

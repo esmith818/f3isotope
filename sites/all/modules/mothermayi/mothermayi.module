@@ -1,0 +1,340 @@
+<?php
+/**
+ * @file
+ * Mother May I module
+ * Allows site administer to specify a password that must be
+ * entered before a new account can be created.
+ */
+
+define('MOTHERMAYI_ADMINISTER_PASSWORD', 'Administer mothermayi password');
+
+/**
+ * Default values
+ */
+define('MOTHERMAYI_WEIGHT_DEFAULT', '10');
+/**
+ * Implements hook_menu().
+ */
+function mothermayi_menu() {
+  $items = array();
+
+  $items['admin/config/people/mothermayi'] = array(
+    'title' => 'Mother May I',
+    'description' => 'Specify \'secret word\' needed to create a new account',
+    'page callback' => 'drupal_get_form',
+    'access arguments' => array(MOTHERMAYI_ADMINISTER_PASSWORD),
+    'page arguments' => array('mothermayi_settings_form'),
+    'weight' => 30,
+  );
+
+  return $items;
+}
+
+/**
+ * Build form to set mothermayi variables.
+ */
+function mothermayi_settings_form() {
+  $form = array();
+
+  $fs = array(
+    '#type' => 'fieldset',
+    '#title' => t('Secret word'),
+    '#description' => t('Specify a site-specific word that potential users must enter before applying for an account. See discussion at !url.',
+            array('!url' => l(t('the Drupal Mother May I site'), 'http://drupal.org/project/mothermayi'))),
+  );
+  $filterval = variable_get('mothermayi_format', filter_default_format());
+  $fs['mothermayi_secret_word'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Secret word required to create an account'),
+    '#size' => 15,
+    '#default_value' => variable_get('mothermayi_secret_word', ''),
+    '#description' =>
+      t('If supplied, a new user must enter this word to create an account. Leave blank to disable.'),
+  );
+  $fs['mothermayi_use_preg'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Use regular expression'),
+    '#default_value' => variable_get('mothermayi_use_preg', 0),
+    '#description' =>
+      t('If set, the secret word is a regular expression as used with preg_match(), for example @example for case-insensitive match.',
+              array('@example' => '\'/^aword$/i\'')),
+  );
+  $fs['_mothermayi_test'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Test word'),
+    '#default_value' => '',
+    '#description' => t('If you put an entry here, it will be checked against your secret word.'),
+  );
+  $fs['mothermayi_secret_hint'] = array(
+    '#base_type' => 'textarea',
+    '#type' => 'text_format',
+    '#title' => t('User hint'),
+    '#cols' => 40,
+    '#rows' => 5,
+    '#resizable' => TRUE,
+    '#default_value' => variable_get('mothermayi_secret_hint', ''),
+    '#description' => t('If specified, this will be listed as a hint to the knowledgable user.'),
+    '#format' => $filterval,
+  );
+  $form['mothermayi_fs1'] = $fs;
+
+  $fs = array(
+    '#type' => 'fieldset',
+    '#title' => t('Empty field'),
+    '#description' => t('This lets you include an empty field that must be left empty. Many bots will try to fill it in.'),
+  );
+
+  $fs['mothermayi_empty'] = array(
+    '#type' => 'checkbox',
+    '#title' => t('Show text field that must be left empty.'),
+    '#default_value' => variable_get('mothermayi_empty', FALSE),
+    '#description' => t('If checked, the user will see a text field that must be left empty.'),
+  );
+
+  $fs['mothermayi_empty_description'] = array(
+    '#type' => 'textarea',
+    '#title' => t('Emptyfield description'),
+    '#cols' => 40,
+    '#rows' => 5,
+    '#resizable' => TRUE,
+    '#default_value' => variable_get('mothermayi_empty_description', 'Leave blank'),
+    '#description' => t('If specified, this will be used as descriptive text telling the prospective user to leave the field empty'),
+  );
+  $form['mothermayi_fs2'] = $fs;
+  $form['mothermayi_weight'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Form weight'),
+    '#size' => 4,
+    '#default_value' => variable_get('mothermayi_weight',
+            MOTHERMAYI_WEIGHT_DEFAULT),
+    '#description' => t('Weight controls location of item on page'),
+  );
+  $form['#submit'][] = '_mothermayi_settings_form_submit';
+  $form['#validate'][] = '_mothermayi_settings_form_validate';
+  $form = system_settings_form($form);
+  return $form;
+}
+
+/**
+ * Validate administrative settings.
+ *
+ * @param array $form
+ *   The form just submitted
+ * @param array $form_state
+ *   And the state thereof.
+ */
+function _mothermayi_settings_form_validate($form, &$form_state) {
+  $vals = $form_state['values'];
+
+  $w = $vals['mothermayi_weight'];
+  if (!is_numeric($w)) {
+    form_set_error('mothermayi_weight', t('Weight must be numeric.'));
+  }
+
+  $theword = $vals['mothermayi_secret_word'];
+  $up = $vals['mothermayi_use_preg'];
+  if ($theword != '') {
+    if ($up == 0 && !ctype_alnum($theword)) {
+      form_set_error('mothermayi_secret_word',
+              t('Secret word must be alphanumeric.'));
+    }
+
+    if ($up) {
+      // Check that the regular expression is OK.
+      if (preg_match($theword, 'foo') === FALSE) {
+        form_set_error('mothermayi_secret_word', t('Invalid preg.'));
+        return;
+      }
+    }
+    $tw = $vals['_mothermayi_test'];
+    if ($tw != '') {
+      if (!_mothermayi_check_secret($tw, $theword, $up)) {
+        form_set_error('_mothermayi_test', t("This doesn't match the secret word."));
+      }
+    }
+  }
+}
+
+/**
+ * Called to handle special values after settings form is validated.
+ *
+ * @param array $form
+ *   The form.
+ * @param array $form_state
+ *   The submitted state.
+ */
+function _mothermayi_settings_form_submit($form, &$form_state) {
+
+  // Seems like there should be a better way to do this. But it works.
+  $hint = $form_state['values']['mothermayi_secret_hint'];
+  $form_state['values']['mothermayi_format'] = $hint['format'];
+  $form_state['values']['mothermayi_secret_hint'] = $hint['value'];
+
+  // Don't want to save this.
+  unset ($form_state['values']['_mothermayi_test']);
+}
+
+/**
+ * Implements hook_form_user_register_form_alter().
+ *
+ * @param array $form
+ *   The form so far.
+ * @param array $form_state
+ *   Current form state.
+ * @param string $form_id
+ *   Name of form.
+ */
+function mothermayi_form_user_register_form_alter(&$form, &$form_state, $form_id) {
+  global $user;
+  if (isset($user) && ($user->uid > 0)) {
+    // The point of MotherMayI is to prevent spam account creations.
+    // If this user is already logged in, the protection is kind of pointless.
+    return;
+  }
+  
+  $fs = array();
+  $pw = variable_get('mothermayi_secret_word', '');
+  if (!empty($pw)) {
+    // Add the "secret word" field.
+    $fs['mothermayi_password'] = array(
+      '#type' => 'textfield',
+      '#required' => TRUE,
+      '#size' => 30,
+      '#description' => t('Enter the secret word.'),
+      '#weight' => 1,
+    );
+    $hint = variable_get('mothermayi_secret_hint', '');
+    if ($hint != '') {
+      $filter = variable_get('mothermayi_filter', filter_default_format());
+      $hint = check_markup($hint, $filter, FALSE);
+      $fs['hint'] = array(
+        '#type' => 'item',
+        '#description' => $hint,
+        '#weight' => 0,
+      );
+    }
+  }
+  $ef = variable_get('mothermayi_empty', FALSE);
+  if ($ef) {
+    // Add a "must be empty" field.
+    $filter = variable_get('mothermayi_filter', filter_default_format());
+    $desc = variable_get('mothermayi_empty_description', t('Leave blank'));
+    $desc = check_markup($desc, $filter, FALSE);
+    $fs['mothermayi_mty'] = array(
+      '#type' => 'textfield',
+      '#size' => 20,
+      '#description' => $desc,
+      '#default' => '',
+      '#weight' => 1,
+    );
+  }
+  if (!empty($fs)) {
+    $fs['#type'] = 'fieldset';
+    $fs['#title'] = t('Secret word');
+    $w = intval(variable_get('mothermayi_weight', MOTHERMAYI_WEIGHT_DEFAULT));
+    $fs['#weight'] = $w;
+    $form['mothermayi'] = $fs;
+    $form['#validate'][] = '_mothermayi_user_register_validate';
+  }
+}
+
+/**
+ * Validate secret word on user account request.
+ *
+ * Note that this will only be called if a secret word has been configured.
+ *
+ * @param array $form
+ *   The registration form.
+ * @param array $form_state
+ *   State of the form. In particular, values entered.
+ */
+function _mothermayi_user_register_validate($form, &$form_state) {
+  $values = $form_state['values'];
+  $pwd = NULL;
+  $mty = NULL;
+  if (isset($values['mothermayi_password'])) {
+    $pwd = $values['mothermayi_password'];
+  }
+  if (isset($values['mothermayi_mty'])) {
+    $mty = $values['mothermayi_mty'];
+  }
+  if (isset($pwd) || isset($mty)) {
+    // Get list of existing form errors.
+    $errs = form_set_error();
+    $doreport = (!isset($errs) || count($errs) == 0);
+    // Check the secret word.
+    if (isset($pwd) && !_mothermayi_check_secret($pwd)) {
+      if ($doreport) {
+        form_set_error('mothermayi_password',
+          t('The secret word is not correct.'));
+      }
+      watchdog('mothermayi', 
+        'Secret word failure, user \'@user\', attempt \'@sw\'',
+        array('@user' => $values['name'], '@sw' => $pwd), 
+        WATCHDOG_NOTICE);
+    }
+    if (!empty($mty)) {
+      if ($doreport) {
+        form_set_error('error', t('Please read the directions!'));
+      }
+      watchdog('mothermayi',
+        'Empty field failure: user \'@user\', field \'@field\'',
+        array('@field' => $mty, '@user' => $values['name']), WATCHDOG_NOTICE);
+    }
+
+    // Don't save the secret word in the user block.
+    unset($form_state['values']['mothermayi_password']);
+    unset($form_state['values']['mothermayi_mty']);
+  }
+}
+
+/**
+ * Check if a user-entered secret word is correct.
+ *
+ * @param string $upw
+ *   The entered password.
+ * @param string $sw
+ *   If set, the secret word.
+ * @param int $up
+ *   If set, use this as "use preg" indication.
+ *
+ * @returns boolean
+ *   TRUE if the password is correct.
+ */
+function _mothermayi_check_secret($upw, $sw = NULL, $up = -1) {
+  if ($sw == NULL) {
+    $sw = variable_get('mothermayi_secret_word', '');
+  }
+  if ($sw == '') {
+    // No secret word, so we're OK.
+    return TRUE;
+  }
+
+  // There is a secret word, so we need to check it.
+  if ($up < 0) {
+    $up = variable_get('mothermayi_use_preg', 0);
+  }
+  if ($up == 0) {
+    // Not already a preg, so turn it into one that exactly matches the word.
+    $sw = "/^$sw\$/";
+  }
+
+  // OK the user if the secret word matches the pattern.
+  return (preg_match($sw, $upw) > 0);
+}
+
+/**
+ * Implements hook_permission().
+ * 
+ * @return array
+ *   Returns list of permissions.
+ */
+function mothermayi_permission() {
+  return array(
+    MOTHERMAYI_ADMINISTER_PASSWORD => array(
+      'title' => t('Administer Mother May I secret word'),
+      'description' => t('Set up special secret word needed to create an account.'),
+      'restrict access' => TRUE,
+    )
+  );
+}
