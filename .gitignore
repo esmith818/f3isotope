@@ -4,3 +4,12 @@ sites/*/settings*.php
 # Ignore paths that contain user-generated content.
 sites/*/files
 sites/*/private
+
+# Ignore bluehost default website files.
+*.shtml
+default.html
+error_log
+favicon.ico
+logs/*
+php.ini
+.htaccess*
