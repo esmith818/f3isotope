@@ -5,12 +5,4 @@ sites/*/settings*.php
 sites/*/files
 sites/*/private
 
-# Ignore bluehost default website files.
-*.shtml
-500.php
-default.html
-error_log
-favicon.ico
-logs/*
-php.ini
-.htaccess*
+/.htaccess
