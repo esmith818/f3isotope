@@ -19,8 +19,11 @@ td a:hover {
   color: #515151;
 }
 
+textarea.form-textarea,
+input.form-text,
+select.form-select,
 div.form-type-textfield {
-  width: 100%;
+  width: 99%;
 }
 
 input#edit-title,
@@ -100,6 +103,7 @@ iframe>html,
 
 select#edit-field-subregion-und,
 select#edit-field-ao-und,
+select#edit-field-workout-style-und,
 select#edit-field-affiliations-value {
   font-size: inherit;
 }
@@ -383,7 +387,10 @@ li.leaf a.active {
    background-color: #F0F8FF;
 }
 
-.field-name-field-qic {
+.field-name-field-ao,
+.field-name-field-qic,
+.field-name-field-workout-style,
+.field-name-field-event-location {
    background-color: #F0F8FF;
    padding: 4px 16px;
 }
@@ -571,6 +578,190 @@ h2.comment-form,
 
 .field-name-field-user-taxonomy>.field-items>.field-item {
   background-color: #2f56e9;
+}
+
+/* *************************************************
+// Calendar
+// ************************************************/
+
+.view .date-nav-wrapper .date-nav {
+  height: 30px !important;
+}
+
+.date-nav {
+  padding-bottom: 0 !important;
+}
+
+.view .date-nav-wrapper .date-heading {
+  font-size: smaller;
+}
+
+.view .date-nav-wrapper .date-prev {
+  left: 0 !important;
+  right: auto !important;
+}
+
+.view .date-nav-wrapper .date-prev,
+.view .date-nav-wrapper .date-next {
+  -moz-border-radius: 5px !important;
+  border-radius: 5px !important;
+  background: none repeat scroll 0 0 #a80707 !important;
+  color: white !important;
+}
+
+.view .date-nav-wrapper .date-prev a,
+.view .date-nav-wrapper .date-next a {
+  margin: 10px !important;
+}
+
+select#edit-field-subregion-tid {
+  width: 100%;
+}
+
+#edit-field-subregion-tid-wrapper .description {
+  font-style: italic;
+  font-size: smaller;
+}
+
+.calendar-calendar td.empty {
+  color: #edcdcd !important;
+}
+
+.calendar-calendar .month-view .full td.multi-day div.monthview,
+.calendar-calendar .week-view .full td.multi-day div.weekview,
+.calendar-calendar .day-view .full td.multi-day div.dayview,
+.calendar-calendar .month-view .full td.multi-day .inner .monthview .continues,
+.calendar-calendar .month-view .full td.multi-day .inner .monthview .cutoff,
+.calendar-calendar .week-view .full td.multi-day .inner .weekview .continues,
+.calendar-calendar .week-view .full td.multi-day .inner .weekview .cutoff {
+  background: #f6e6e6 !important;
+}
+
+.calendar-calendar .month-view .full td.single-day div.monthview,
+.calendar-calendar .week-view .full td.single-day div.weekview,
+.calendar-calendar .day-view .full td.single-day div.dayview {
+  background: #f6e6e6 !important;
+  padding: 0px !important;
+}
+
+.views-field-field-f3-event-title {
+  background: #ffc !important;
+  width: auto;
+  padding: 0px 3px !important;
+  overflow: hidden;
+}
+
+.node-f1-event .field-name-field-event-date,
+.node-f1-event .field-name-field-pax {
+  margin: 0 !important;
+}
+
+.node-f1-event .field-label-inline .field-items {
+  float: none !important;
+}
+
+.node-f1-event .field-label-inline .field-label {
+  display: none !important;
+}
+
+.node-f1-event .field-name-field-event-location {
+  display: block !important;
+}
+
+.node-f1-event .field-name-field-pax,
+.node-f1-event .field-name-field-ao,
+.node-f1-event .field-name-field-workout-style {
+  float: left !important;
+}
+
+.field-name-field-event-style,
+.field-name-field-event-title,
+.field-name-field-event-qic,
+.field-name-field--event-q,
+.field-type-datetime,
+.field-name-field-subregion,
+.field-name-field-topic,
+.field-name-field-3rdf-event,
+.field-name-field-sub-region,
+.field-name-field-f3-event-title {
+  background-color: #F0F8FF;
+  padding: 4px 16px;
+}
+
+#edit-field-event-title-und,
+#edit-field-event-style-und,
+#edit-field-3rdf-event-und,
+#edit-field-f3-event-title-und,
+#edit-field-sub-region-und {
+  font-size: inherit;
+}
+
+/* *************************************************
+// F1 (Block View)
+// ************************************************/
+
+.view-f1-custom-view {
+  background-color: #F0F8FF;
+  padding: 4px 16px;
+}
+
+.f1-title-label,
+.f1-q-label,
+.f1-style-label,
+.f1-location-label,
+.f1-date-label,
+.f1-qic-label {
+  float: left;
+  padding-right: 6px;
+  font-weight: bold;
+}
+
+.f1-style-label,
+.f1-style {
+  padding-top: 10px;
+}
+
+.f1-location a,
+.f1-location a:visited {
+  color: #a80707 !important;
+}
+
+.f1-location a:hover {
+   color: #515151 !important;
+}
+
+/* *************************************************
+// F3 (Block View)
+// ************************************************/
+
+.view-f3-custom-view {
+  background-color: #F0F8FF;
+  padding: 4px 16px;
+}
+
+.f3-title-label,
+.f3-q-label,
+.f3-topic-label,
+.f3-location-label,
+.f3-date-label,
+.f3-qic-label {
+  float: left;
+  padding-right: 6px;
+  font-weight: bold;
+}
+
+.f3-location-label,
+.f3-location {
+  padding-top: 10px;
+}
+
+.f3-location a,
+.f3-location a:visited {
+  color: #a80707 !important;
+}
+
+.f3-location a:hover {
+   color: #515151 !important;
 }
 
 /* *************************************************
