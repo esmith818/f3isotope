@@ -144,7 +144,9 @@ function skeletontheme_date_nav_title($params) {
 		break;
 		
 		case 'day':
-		$format = !empty($format) ? $format : (empty($date_info->mini) ? 'l, F j Y' : 'l, F j');
+		// 'l, F j Y' = Sunday, August 2 2015
+		// 'D, M j, Y' = Sun, Aug 2, 2015
+		$format = !empty($format) ? $format : (empty($date_info->mini) ? 'D, M j, Y' : 'M j, Y');
 		$title = date_format_date($date_info->min_date, 'custom', $format);
 		$date_arg = $date_info->year .'-'. date_pad($date_info->month) .'-'. date_pad($date_info->day);
 		break;
