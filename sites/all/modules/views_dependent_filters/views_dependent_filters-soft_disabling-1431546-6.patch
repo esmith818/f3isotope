@@ -1,0 +1,178 @@
+diff --git a/views_dependent_filters_handler_filter_dependent.inc b/views_dependent_filters_handler_filter_dependent.inc
+index fd758b0..a94099a 100644
+--- a/views_dependent_filters_handler_filter_dependent.inc
++++ b/views_dependent_filters_handler_filter_dependent.inc
+@@ -10,6 +10,48 @@ class views_dependent_filters_handler_filter_dependent extends views_handler_fil
+    */
+   var $filters_kill = array();
+ 
++  function init(&$view, &$options) {
++    parent::init($view, $options);
++
++    $filters = $this->view->display_handler->get_handlers('filter');
++
++    // Build an array of dependency info.
++    $dependency_info = array(
++      // An array keyed by controller filter IDs, where the values are arrays
++      // of their possible values.
++      // In practice there is only one controller filter, but technically there
++      // could be several. The problem is that the admin UI to set them up
++      // would become a nightmare, and there's the matter of whether to combine
++      // them with AND or OR. Hence one for later, if ever required.
++      'controllers' => array(),
++      // An array of dependent filter IDs.
++      'dependents'  => array(),
++      // A lookup of filter IDs to filter URL identifiers.
++      'identifiers' => array(),
++    );
++    if (!empty($this->options['controller_filter'])) {
++      $controller_filter = $this->options['controller_filter'];
++      $dependency_info['controllers'][$controller_filter] = array();
++      if (!empty($this->options['controller_values'])) {
++        if (is_array($this->options['controller_values'])) {
++          // Filter out the crud from Form API checkboxes and get rid of the
++          // keys to avoid confusion: we compare on values further down.
++          $controller_values = array_values(array_filter($this->options['controller_values']));
++        }
++        else {
++          $controller_values = array($this->options['controller_values']);
++        }
++
++        $dependency_info['controllers'][$controller_filter] = $controller_values;
++
++        $identifier = $filters[$controller_filter]->options['expose']['identifier'];
++        $dependency_info['identifiers'][$controller_filter] = $identifier;
++      }
++    }
++    $dependency_info['dependents'] = array_values(array_filter($this->options['dependent_filters']));
++
++    $this->dependency_info = $dependency_info;
++  }
+   /**
+    * Disable the filters we control.
+    */
+@@ -39,7 +81,7 @@ class views_dependent_filters_handler_filter_dependent extends views_handler_fil
+     $options['controller_filter'] = array('default' => NULL);
+     $options['controller_values'] = array('default' => NULL);
+     $options['dependent_filters'] = array('default' => array());
+-
++    $options['soft_disabling'] = array('default' => FALSE, 'bool' => TRUE);
+ 
+     return $options;
+   }
+@@ -167,6 +209,13 @@ class views_dependent_filters_handler_filter_dependent extends views_handler_fil
+     if (empty($options)) {
+       $form['dependent_filters']['#description'] .= ' ' . t('This filter needs other filters to be placed below it in the order to use as dependents.');
+     }
++
++    $form['soft_disabling'] = array(
++      '#type' => 'checkbox',
++      '#title' => t('Ignore input data of invisible filters'),
++      '#default_value' => isset($this->options['soft_disabling']) ? $this->options['soft_disabling'] : FALSE,
++      '#description' => t('By default, dependent filter sets invisible filters as non-exposed. If this option is enabled, these filters will just ignore their input data instead.'),
++    );
+   }
+ 
+   function has_extra_options() { return TRUE; }
+@@ -216,63 +265,12 @@ class views_dependent_filters_handler_filter_dependent extends views_handler_fil
+    * Make our changes to the form but don't return anything ourselves.
+    */
+   function exposed_form(&$form, &$form_state) {
+-    $filters = $this->view->display_handler->get_handlers('filter');
+ 
+-    // Build an array of dependency info.
+-    $dependency_info = array(
+-      // An array keyed by controller filter IDs, where the values are arrays
+-      // of their possible values.
+-      // In practice there is only one controller filter, but technically there
+-      // could be several. The problem is that the admin UI to set them up
+-      // would become a nightmare, and there's the matter of whether to combine
+-      // them with AND or OR. Hence one for later, if ever required.
+-      'controllers' => array(),
+-      // An array of dependent filter IDs.
+-      'dependents'  => array(),
+-      // A lookup of filter IDs to filter URL identifiers.
+-      'identifiers' => array(),
+-    );
+-    if (!empty($this->options['controller_filter'])) {
+-      $controller_filter = $this->options['controller_filter'];
+-      $dependency_info['controllers'][$controller_filter] = array();
+-      if (!empty($this->options['controller_values'])) {
+-        if (is_array($this->options['controller_values'])) {
+-          // Filter out the crud from Form API checkboxes and get rid of the
+-          // keys to avoid confusion: we compare on values further down.
+-          $controller_values = array_values(array_filter($this->options['controller_values']));
+-        }
+-        else {
+-          $controller_values = array($this->options['controller_values']);
+-        }
+-
+-        $dependency_info['controllers'][$controller_filter] = $controller_values;
+-
+-        $identifier = $filters[$controller_filter]->options['expose']['identifier'];
+-        $dependency_info['identifiers'][$controller_filter] = $identifier;
+-      }
+-    }
+-    $dependency_info['dependents'] = array_values(array_filter($this->options['dependent_filters']));
+     // Populate the identifiers lookup with our dependent filters.
+-    foreach ($dependency_info['dependents'] as $dependent_filter_id) {
+-      $identifier = $filters[$dependent_filter_id]->options['expose']['identifier'];
+-      $dependency_info['identifiers'][$dependent_filter_id] = $identifier;
+-    }
+-
+-    //dsm($form_state['input'], 'input');
+     $filters = $this->view->display_handler->get_handlers('filter');
+-    foreach ($dependency_info['controllers'] as $filter_id => $controller_values) {
+-      // Get the form identifier.
+-      $identifier = $filters[$filter_id]->options['expose']['identifier'];
+-      // Get the input for this filter.
+-      $input = $form_state['input'][$identifier];
+-      // Convert values for non-multiple filters to an array.
+-      if (!$this->view->filter[$filter_id]->options['expose']['multiple']) {
+-        $input = array($input);
+-      }
+-      $intersection = array_intersect($input, $controller_values);
+-      if (!count($intersection)) {
+-        $this->filters_kill = $dependency_info['dependents'];
+-      }
++    foreach ($this->dependency_info['dependents'] as $dependent_filter_id) {
++      $identifier = $filters[$dependent_filter_id]->options['expose']['identifier'];
++      $this->dependency_info['identifiers'][$dependent_filter_id] = $identifier;
+     }
+ 
+     // We can kill the dependent filters now.
+@@ -294,7 +292,7 @@ class views_dependent_filters_handler_filter_dependent extends views_handler_fil
+     // Add our settings to the form state as an array, as we need to account
+     // for the possiblity that more than one copy of this handler may be
+     // playing at once!
+-    $form_state['dependent_exposed_filters'][] = $dependency_info;
++    $form_state['dependent_exposed_filters'][] = $this->dependency_info;
+     $form['#after_build'] = array('views_dependent_filters_exposed_form_after_build');
+ 
+     // Some clean-up for things that come later.
+@@ -321,6 +319,25 @@ class views_dependent_filters_handler_filter_dependent extends views_handler_fil
+    * Prevent the view from accepting input from ourselves and dependents.
+    */
+   function accept_exposed_input($input) {
++    // Build the list of filters to disable.
++    $filters = $this->view->display_handler->get_handlers('filter');
++    foreach ($this->dependency_info['controllers'] as $filter_id => $controller_values) {
++      // Get the form identifier.
++      $identifier = $filters[$filter_id]->options['expose']['identifier'];
++      // Get the input for this filter.
++      if (isset($this->view->exposed_input[$identifier])){
++        $input = $this->view->exposed_input[$identifier];
++        // Convert values for non-multiple filters to an array.
++        if (!$this->view->filter[$filter_id]->options['expose']['multiple']) {
++          $input = array($input);
++        }
++        $intersection = array_intersect($input, $controller_values);
++      }
++      if (empty($intersection)) {
++        $this->filters_kill = $this->dependency_info['dependents'];
++      }
++    }
++
+     // Disable our dependent filters just before they have a chance to act
+     // on exposed input.
+     $this->filters_disable();

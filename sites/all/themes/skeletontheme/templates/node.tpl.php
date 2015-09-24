@@ -105,6 +105,9 @@
       if ($node->type == 'f1_event') {
         print views_embed_view('f1_custom_view','block', $node->nid);
       }
+      else if ($node->type == 'f2_event') {
+        print views_embed_view('f2_custom_view','block', $node->nid);
+      }
       else if ($node->type == 'f3_event') {
         print views_embed_view('f3_custom_view','block', $node->nid);
       }
@@ -113,7 +116,7 @@
       }
     ?>
   </div>
-  
+
   <?php print render($content['comments']); ?>
 
   <?php
@@ -126,7 +129,7 @@
     $links = render($content['links']);
     if ($links):
   ?>
-  
+
     <!-- <div class="link-wrapper">
       <?php //print $links; ?>
     </div> -->
