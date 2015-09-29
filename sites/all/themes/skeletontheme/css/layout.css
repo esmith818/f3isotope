@@ -45,10 +45,10 @@
 
 /* #Media Queries
 ================================================== */
-	
+
 	/* iPad Portrait/Browser */
 	@media only screen and (min-width: 768px) and (max-width: 991px) {}
-	
+
 	/* Mobile/Browser */
 	@media only screen and (max-width: 767px) {
 
@@ -68,30 +68,30 @@
 	.five_sixth {width: 100%;}
 
 	}
-	
+
 	/* Mobile Landscape/Browser */
 	@media only screen and (min-width: 480px) and (max-width: 767px) {}
-	
+
 	/* Anything smaller than standard 960 */
 	@media only screen and (max-width: 959px) {}
-	
+
 	/* iPad Portrait Only */
 	@media only screen and (min-width: 768px) and (max-width: 991px) and (max-device-width: 1000px) {}
-	
+
 	/* Mobile Only */
 	@media only screen and (max-width: 767px) and (max-device-width: 1000px) {}
-	
+
 	/* Mobile Landscape Only */
 	@media only screen and (min-width: 480px) and (max-width: 767px) and (max-device-width: 1000px) {}
-	
+
 
 /* #Font-Face
 ================================================== */
-/* 	This is the proper syntax for an @font-face file 
-		Just create a "fonts" folder at the root, 
+/* 	This is the proper syntax for an @font-face file
+		Just create a "fonts" folder at the root,
 		copy your FontName into code below and remove
 		comment brackets */
-		
+
 /*	@font-face {
 	    font-family: 'FontName';
 	    src: url('../fonts/FontName.eot');

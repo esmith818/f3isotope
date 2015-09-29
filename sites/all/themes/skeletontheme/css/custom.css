@@ -7,6 +7,14 @@ h1 > em {
    display: none;
 }
 
+/* Vertical menu tabs */
+a:hover strong,
+a:hover span.summary,
+a:active span.summary,
+li.vertical-tab-button span {
+  color: #a80707 !important;
+}
+
 p a:link, p a:visited,
 span a:link, span a:visited,
 td a:link, td a:visited {
@@ -19,18 +27,44 @@ td a:hover {
   color: #515151;
 }
 
+
 textarea.form-textarea,
 input.form-text,
 select.form-select,
 div.form-type-textfield {
-  width: 99%;
+  width: 95%;
+}
+
+form.node-page-form .form-item-title {
+  background-color: transparent;
+}
+
+form.node-page-form .form-item-title input {
+  width: 100%;
+}
+
+div.form-item-field-event-location-und-0-value,
+div.form-item-field-f-event-title-und-0-value,
+div.form-item-field-f-event-title-und-0-value {
+  width: 95%;
+}
+
+div.autocomplete-deluxe-container {
+  width: 97%;
+}
+
+div.form-item-field-f-event-title-und-0-value {
+  background-color: #F0F8FF;
+  padding: 4px 16px;
+  margin-bottom: 0 !important;
+  margin-top: 12px !important;
 }
 
 input#edit-title,
 input#edit-field-tags-und {
   display: inherit;
   width: 98%;
-  padding: 4px 0;
+  padding: 4px;
 }
 
 input#edit-field-qic-und,
@@ -38,6 +72,15 @@ input#edit-field-pax-und {
   display: inherit;
   width: 100%;
   padding: 4px 0;
+}
+
+ul.tabs a,
+ul.tabs a:visited {
+  color: #515151 !important;
+}
+
+ul.tabs a:hover {
+   color: #a80707 !important;
 }
 
 #page-title {
@@ -128,6 +171,26 @@ select#edit-field-affiliations-value {
 
 div.description {
   font-style: italic !important;
+}
+
+/* *************************************************
+// Event Views
+// ************************************************/
+
+.views-field-field-q-tax span,
+.views-field-field-event-style-1 span,
+.views-field-field-f-event-date span {
+  float: left;
+}
+
+.views-field-field-q-tax div {
+  margin-left: 20px;
+}
+
+div.views-field-field-event-style-1 div,
+div.views-field-field-f-event-date div {
+  margin-left: 3px;
+  display: inline-flex;
 }
 
 /* *************************************************
@@ -255,6 +318,104 @@ li.leaf a.active {
 }
 
 /* *************************************************
+// Preblast
+// ************************************************/
+
+.view-preblast-custom-view {
+  background-color: #F0F8FF;
+  padding: 16px;
+  line-height: 1.75;
+}
+
+.pb-custom-body {
+  margin:0 -14px;
+}
+
+.pb-custom-location,
+.pb-custom-date {
+  clear: left;
+}
+
+.pb-custom-body div p {
+  margin-top: 40px;
+  display: inherit;
+}
+
+.pb-custom-location span {
+  float: left;
+  font-weight: bold;
+}
+
+.pb-custom-date span {
+  font-weight: bold;
+}
+
+.pb-custom-location div {
+  margin-left: 70px;
+}
+
+.pb-custom-date div div span {
+  font-weight: normal !important;
+  clear: none;
+}
+
+.pb-custom-date .date-display-start {
+  margin-left: 8px;
+}
+
+.pb-custom-location a,
+.pb-custom-location a:visited {
+  color: #a80707;;
+}
+
+.pb-custom-location a:hover {
+  color: #515151;
+}
+
+.pb-custom-q div {
+   float: left;
+   background: #a8a8a8;
+   padding: 1px 10px;
+   margin: 2px;
+   margin-left: 3px;
+   vertical-align: middle;
+}
+
+.pb-custom-q span {
+  clear: left;
+}
+
+.pb-custom-q div a {
+   color: white;
+   font-size: 14px;
+   font-family: "PT Sans Narrow",Helvetica, Arial, Sans-Serif;
+   text-decoration: none !important;
+}
+
+.pb-custom-q div a:hover {
+   color: #a80707;
+}
+
+.pb-custom-subregion {
+   float: left;
+   background: #a80707;
+   padding: 1px 10px;
+   margin: 2px;
+   vertical-align: middle;
+}
+
+.pb-custom-subregion div a {
+   color: white;
+   font-size: 14px;
+   font-family: "PT Sans Narrow",Helvetica, Arial, Sans-Serif;
+   text-decoration: none !important;
+}
+
+.pb-custom-subregion div a:hover {
+   color: #a8a8a8;
+}
+
+/* *************************************************
 // Back blast teasers (7/9/15)
 // ************************************************/
 
@@ -263,7 +424,8 @@ li.leaf a.active {
   border-bottom: #515151 1pt solid;
 }
 
-.bb-recent-title {
+.bb-recent-title,
+.preblast-recent-title a {
   font-family: "Bitter";
   font-size: larger;
 }
@@ -276,7 +438,9 @@ li.leaf a.active {
   margin-top: 6px;
 }
 
-.bb-recent-ao a {
+.bb-recent-ao a,
+.views-field-field-subregion a,
+.preblast-recent-subregion a {
   display: inline-block;
   background: #CCC; /* #a80707; */
   padding: 5px 10px;
@@ -285,11 +449,16 @@ li.leaf a.active {
 }
 
 .bb-recent-ao a:link,
-.bb-recent-ao a:visited {
+.bb-recent-ao a:visited,
+.views-field-field-subregion a:link,
+.views-field-field-subregion a:visited {
   color: #333;
 }
 
-.bb-recent-ao a:hover {
+.bb-recent-ao a:hover,
+.views-field-field-subregion a:hover,
+.bb-recent-qic a:hover,
+.preblast-recent-subregion a:hover {
   color: #a80707;
 }
 
@@ -346,6 +515,49 @@ li.leaf a.active {
 }
 
 /* *************************************************
+// Teaser Views
+// ************************************************/
+
+.view-ao-content .views-row,
+.view-preblast-recent .views-row,
+.bb-recent-ao .field-content {
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #d6d6d6;
+}
+
+.tax-teaser a {
+  font-family: "Bitter";
+  font-size: larger;
+  font-weight: bold;
+}
+
+.tax-teaser-q span,
+.views-field-field-event-location span,
+.pb-custom-q span {
+  font-weight: bold;
+  float: left;
+}
+
+.views-field-field-event-location a,
+.views-field-field-event-location a:visited {
+  color: #a80707 !important;
+}
+
+.views-field-field-event-location a:hover {
+  color: #414141 !important;
+}
+
+.tax-teaser-q div {
+  color: #a80707;
+  margin-left: 20px;
+}
+
+.views-field-field-event-location div {
+  margin-left: 75px;
+}
+
+/* *************************************************
 // Blog Content
 // ************************************************/
 
@@ -380,33 +592,61 @@ li.leaf a.active {
    background: #515151;
 }
 
-.field-name-field-backblast-date {
-   margin-top: 15px;
+.field-name-field-subregion {
+   /*margin-top: 10px;*/
    padding: 16px 16px 4px;
    /*background-color: #eef8fa;*/
    background-color: #F0F8FF;
 }
 
-.field-name-field-ao,
+.form-item-title {
+  padding: 4px 16px;
+  background-color: #F0F8FF;
+  margin-bottom: 0 !important;
+  margin-top: 12px !important;
+}
+
+.field-name-field-backblast-date,
 .field-name-field-qic,
+.field-name-field-event-location,
 .field-name-field-workout-style,
-.field-name-field-event-location {
+.field-name-field-q-tax,
+.field-name-field-event-date,
+.field-name-field-qic-tax {
    background-color: #F0F8FF;
    padding: 4px 16px;
 }
 
-.field-name-field-pax {
+.field-name-field-event-date .field-label {
+  float: left;
+}
+
+.field-name-field-event-date .field-items {
+  margin-left: 6px;
+}
+
+.date-display-single,
+.pb-custom-date {
+  display: inline-flex !important;
+}
+
+.field-name-field-pax ,
+.field-name-field-ao {
    padding: 4px 16px 16px;
-   margin-bottom: 20px;
    background-color: #F0F8FF;
 }
 
-.field-name-field-event-date {
+.field-name-field-pax,
+.node-preblast .field-name-field-q-tax {
+   margin-bottom: 20px;
+}
+
+/*.field-name-field-event-date {
    margin: 15px 0;
    padding: 16px;
-   /*background-color: #eef8fa;*/
+   background-color: #eef8fa;
    background-color: #F0F8FF;
-}
+}*/
 
 .field-label {
    font-weight: bold;
@@ -548,7 +788,7 @@ h2.comment-form,
   font-size: initial;
 }
 
-.lexicon-admin-links a:link, 
+.lexicon-admin-links a:link,
 .lexicon-admin-links a:visited {
   color: #a80707;
 }
@@ -679,13 +919,17 @@ select#edit-field-subregion-tid {
 .field-name-field-event-qic,
 .field-name-field--event-q,
 .field-type-datetime,
-.field-name-field-subregion,
 .field-name-field-topic,
 .field-name-field-3rdf-event,
 .field-name-field-sub-region,
 .field-name-field-f3-event-title {
   background-color: #F0F8FF;
   padding: 4px 16px;
+}
+
+div.profile .field-name-field-sub-region {
+  background-color: transparent;
+  padding: 0;
 }
 
 #edit-field-event-title-und,
@@ -762,6 +1006,14 @@ select#edit-field-subregion-tid {
 
 .f3-location a:hover {
    color: #515151 !important;
+}
+
+/* *************************************************
+// Comments
+// ************************************************/
+
+div#comments h2 {
+  font-size: 1.12em;
 }
 
 /* *************************************************

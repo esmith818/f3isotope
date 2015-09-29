@@ -10,7 +10,7 @@ a:hover, a:active, a:focus { text-decoration: none; }
 
 #main a:hover { text-decoration: none; }
 
-#main h1 a, #main h2 a, #main h3 a, #main h4 a, #main h5 a { text-decoration: none; }	
+#main h1 a, #main h2 a, #main h3 a, #main h4 a, #main h5 a { text-decoration: none; }
 
 h1, h2, h3, h4, h5, h6 { letter-spacing: -1px; margin:0; }
 
@@ -49,7 +49,7 @@ body,input, textarea, select, a.button, fieldset legend { font-family: "PT Sans"
 /* Downloads - Documentation */
 
 .cta { margin: 10px auto 0px auto; padding: 10px 10px 20px 10px; background-color: #f2f2f2; position: relative;
-border: 1px solid #dcdcdc; 
+border: 1px solid #dcdcdc;
 -webkit-border-radius:8px; -moz-border-radius:8px; border-radius:8px; text-shadow: #fff 1px 1px 0;
 box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #fff inset; -moz-box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #fff inset;
 -webkit-box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #fff inset; }
@@ -74,12 +74,12 @@ box-shadow: 1px 1px 0 #fff inset, -1px -1px 0 #fff inset; -moz-box-shadow: 1px 1
 
 #site-name { margin: 0; padding: 0; font-size: 60px; line-height: 55px; letter-spacing: -1px; }
 
-#header #site-name a { margin: 0; padding: 0; line-height: 55px; text-decoration: none; font-weight: bold; 
+#header #site-name a { margin: 0; padding: 0; line-height: 55px; text-decoration: none; font-weight: bold;
 letter-spacing: -2px; text-shadow: 0px 1px 0px #FFF; }
 
 #header #site-name a:hover { color: #3253ad; }
 
-#header #site-slogan { margin: 0; padding: 0; font-size: 24px; line-height: 28px; letter-spacing: -1px; }	
+#header #site-slogan { margin: 0; padding: 0; font-size: 24px; line-height: 28px; letter-spacing: -1px; }
 
 /* Breadcrumb */
 
@@ -110,7 +110,7 @@ text-shadow: 1px 1px 0px #fff; }
 
 .node.node-teaser { margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid #d6d6d6; }
 
-.submitted { font-size: 11px; color: #666666; padding-bottom: 10px; margin-bottom: 10px; } 
+.submitted { font-size: 11px; color: #666666; padding-bottom: 10px; margin-bottom: 10px; }
 
 /* Featured */
 
@@ -273,7 +273,7 @@ fieldset.collapsed { background: transparent; -khtml-border-radius: 0; -moz-bord
 
 fieldset legend { background: #dbdbdb; border: 1px solid #ccc; border-bottom: none; display: block; height: 2em;
 left: -1px; line-height: 2; padding: 0; position: absolute; text-indent: 10px; text-shadow: 0 1px 0 #fff; top: -12px; width: 100%;
--khtml-border-radius-topleft: 4px; -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; border-top-left-radius: 4px; 
+-khtml-border-radius-topleft: 4px; -moz-border-radius-topleft: 4px; -webkit-border-top-left-radius: 4px; border-top-left-radius: 4px;
 -khtml-border-radius-topright: 4px; -moz-border-radius-topright: 4px; -webkit-border-top-right-radius: 4px; border-top-right-radius: 4px; }
 
 fieldset.collapsed legend { -khtml-border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }
@@ -340,7 +340,7 @@ html.js input.throbbing { background-position: 100% -16px; }
 
 .comment-form label { float: left; font-size: 0.929em; }
 
-.comment-form input, .comment-form .form-select { margin: 0; 
+.comment-form input, .comment-form .form-select { margin: 0;
 -khtml-border-radius: 4px; -moz-border-radius: 4px; -webkit-border-radius: 4px; border-radius: 4px; }
 
 .comment-form .form-type-textarea label { float: none; }
@@ -406,7 +406,7 @@ div.vertical-tabs .vertical-tabs-panes fieldset.vertical-tabs-pane { padding: 1e
 
 #search-block-form input.form-submit,
 #search-form input.form-submit { margin-left: 0; margin-right: 0; height: 25px; width: 34px; padding: 0; cursor: pointer;
-text-indent: -9999px; border-color: #e4e4e4 #d2d2d2 #b4b4b4; background: url(../images/search-button.png) no-repeat center top; overflow: hidden; 
+text-indent: -9999px; border-color: #e4e4e4 #d2d2d2 #b4b4b4; background: url(../images/search-button.png) no-repeat center top; overflow: hidden;
 filter:none; }
 
 #search-block-form input.form-submit:hover,
@@ -433,22 +433,22 @@ ol.search-results { padding-left: 0; }
 border-color: #EAEAEA #F5F5F5 #F5F5F5 #F5F5F5;
 -moz-border-radius: 5px 5px 5px 5px; -webkit-border-radius: 5px 5px 5px 5px; border-radius: 5px 5px 5px 5px;
 border-style: solid; border-width: 1px;
-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2); 
-/* IE10 */ 
+box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+/* IE10 */
 background-image: -ms-linear-gradient(top, #fcfcfc 0%, #ececec 100%);
-/* Mozilla Firefox */ 
+/* Mozilla Firefox */
 background-image: -moz-linear-gradient(top, #fcfcfc 0%, #ececec 100%);
-/* Opera */ 
+/* Opera */
 background-image: -o-linear-gradient(top, #fcfcfc 0%, #ececec 100%);
-/* Webkit (Safari/Chrome 10) */ 
+/* Webkit (Safari/Chrome 10) */
 background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0, #fcfcfc), color-stop(1, #ececec));
-/* Webkit (Chrome 11+) */ 
+/* Webkit (Chrome 11+) */
 background-image: -webkit-linear-gradient(top, #fcfcfc 0%, #ececec 100%);
-/* Proposed W3C Markup */ 
-background-image: linear-gradient(top, #fcfcfc 0%, #ececec 100%); 
-/* IE6-9 */ 
+/* Proposed W3C Markup */
+background-image: linear-gradient(top, #fcfcfc 0%, #ececec 100%);
+/* IE6-9 */
 filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#fcfcfc', endColorstr='#ececec'); }
-	
+
 #navigation ul li, #navigation ul.sf-menu li { position: relative; list-style:none; border-right: 1px solid #e3e3e3; background:none; }
 
 #navigation ul li a, #navigation ul.sf-menu li a { padding: 15px 25px; text-decoration: none; line-height:120%;
@@ -502,7 +502,7 @@ display: block; font-weight: bold; text-shadow: 1px 1px 0px #fff; outline:none; 
 #navigation ul ul li a, #navigation ul ul li a.active,
 #navigation ul.sf-menu ul li a, #navigation ul.sf-menu ul li a.active {
 background-color: #f0f0f0; border:none; padding: 10px; }
- 
+
 #navigation ul ul li a:hover,
 #navigation ul.sf-menu ul li a:hover,
 #navigation ul.sf-menu ul li.sfHover > a { background-color:#ffffff; }
@@ -517,15 +517,15 @@ background: #f0f0f0 url('../images/light/arrow_bullet.png') no-repeat 90% 50%; }
 #navigation li li.expanded:hover > a { background-color:#ffffff; }
 
 #navigation li.expanded:hover > a, #menu li.expanded:active > a,
-#navigation li.menuparent:hover > a, #menu li.menuparent:active > a {    
-background: #f0f0f0 url('../images/dark/arrow_bullet.png') no-repeat 90% 50%; }  
-	
-/* 
+#navigation li.menuparent:hover > a, #menu li.menuparent:active > a {
+background: #f0f0f0 url('../images/dark/arrow_bullet.png') no-repeat 90% 50%; }
+
+/*
 * Superfish support: Reset background/border
 */
 #navigation .sf-menu a { border:none; }
-#navigation .sf-menu li { background-color:none; border-top:none; } 
-#navigation .sf-menu li li { border:none; } 
+#navigation .sf-menu li { background-color:none; border-top:none; }
+#navigation .sf-menu li li { border:none; }
 
 /* iPad Portrait/Browser */
 @media only screen and (max-width: 991px) {
