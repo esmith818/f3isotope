@@ -396,7 +396,7 @@ li.leaf a.active {
    color: #a80707;
 }
 
-.pb-custom-subregion {
+.pb-custom-subregion a {
    float: left;
    background: #a80707;
    padding: 1px 10px;
@@ -992,11 +992,6 @@ div.profile .field-name-field-sub-region {
   float: left;
   padding-right: 6px;
   font-weight: bold;
-}
-
-.f3-location-label,
-.f3-location {
-  padding-top: 10px;
 }
 
 .f3-location a,
