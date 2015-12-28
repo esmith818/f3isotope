@@ -85,7 +85,7 @@ function skeletontheme_page_alter($page) {
 		drupal_add_html_head($mobileoptimized, 'MobileOptimized');
 		drupal_add_html_head($handheldfriendly, 'HandheldFriendly');
 		drupal_add_html_head($viewport, 'viewport');
-		
+
 }
 
 function skeletontheme_breadcrumb($variables) {
@@ -110,19 +110,26 @@ if (theme_get_setting('responsive_menu_state')) {
     $responsive_menu_switchwidth = (int) theme_get_setting('responsive_menu_switchwidth','skeletontheme');
     $responsive_menu_topoptiontext = theme_get_setting('responsive_menu_topoptiontext','skeletontheme');
     drupal_add_js(array('skeletontheme' => array('topoptiontext' => $responsive_menu_topoptiontext)), 'setting');
-	
-	drupal_add_js('jQuery(document).ready(function($) { 
-	
+
+	drupal_add_js('jQuery(document).ready(function($) {
+
 	$("#navigation .content > ul").mobileMenu({
 		prependTo: "#navigation",
 		combine: false,
         switchWidth: '.$responsive_menu_switchwidth.',
         topOptionText: Drupal.settings.skeletontheme[\'topoptiontext\']
 	});
-	
+
 	});',
 	array('type' => 'inline', 'scope' => 'header'));
 
+}
+
+function skeletontheme_feed_icon($variables) {
+  $text = t('Subscribe to @feed-title', array('@feed-title' => $variables['title']));
+  if ($image = theme('image', array('path' => drupal_get_path('theme', 'skeletontheme') . '/images/feed.png', 'width' => 65, 'height' => 65, 'alt' => $text))) {
+    return l($image, $variables['url'], array('html' => TRUE, 'attributes' => array('class' => array('xml-icon'), 'title' => $text)));
+  }
 }
 
 function skeletontheme_date_nav_title($params) {
@@ -136,13 +143,13 @@ function skeletontheme_date_nav_title($params) {
 		$title = $date_info->year;
 		$date_arg = $date_info->year;
 		break;
-		
+
 		case 'month':
 		$format = !empty($format) ? $format : (empty($date_info->mini) ? 'F Y' : 'F Y');
 		$title = date_format_date($date_info->min_date, 'custom', $format);
 		$date_arg = $date_info->year .'-'. date_pad($date_info->month);
 		break;
-		
+
 		case 'day':
 		// 'l, F j Y' = Sunday, August 2 2015
 		// 'D, M j, Y' = Sun, Aug 2, 2015
@@ -150,7 +157,7 @@ function skeletontheme_date_nav_title($params) {
 		$title = date_format_date($date_info->min_date, 'custom', $format);
 		$date_arg = $date_info->year .'-'. date_pad($date_info->month) .'-'. date_pad($date_info->day);
 		break;
-		
+
 		case 'week':
 		$format = !empty($format) ? $format : (empty($date_info->mini) ? 'F j Y' : 'F j');
 		$title = t('Week of @date', array('@date' => date_format_date($date_info->min_date, 'custom', $format)));

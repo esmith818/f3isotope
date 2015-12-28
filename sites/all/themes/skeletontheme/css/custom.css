@@ -818,6 +818,10 @@ h2.comment-form,
   font-weight: bold;
 }
 
+.lexicon-list > dl > dd > p {
+  float: none !important;
+}
+
 /* *************************************************
 // Profile
 // ************************************************/
