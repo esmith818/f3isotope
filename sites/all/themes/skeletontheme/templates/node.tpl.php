@@ -111,9 +111,9 @@
       else if ($node->type == 'f3_event') {
         print views_embed_view('f3_custom_view','block', $node->nid);
       }
-      else if ($node->type == 'preblast') {
+      /* else if ($node->type == 'preblast') {
         print views_embed_view('preblast_custom_view','block', $node->nid);
-      }
+      } */
       else {
         print render($content);
       }

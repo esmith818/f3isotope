@@ -577,7 +577,7 @@ li.leaf a.active {
 // Blog Content
 // ************************************************/
 
-.field-name-body p {
+/* .field-name-body p {
 	width: 100%;
 }
 
@@ -586,7 +586,7 @@ li.leaf a.active {
 .field-content li {
 	float: left;
 	width: 100%;
-}
+} */
 
 .node-teaser ul,
 .node-teaser li {
@@ -1075,6 +1075,11 @@ div#comments h2 {
 .footer-links a {
    color: #dcdcdc !important;
    font-family: "PT Sans Narrow" !important;
+}
+
+.footer-links a.chosen-single {
+  color: #000 !important;
+  font-family: "PT Sans Narrow" !important;
 }
 
 .footer-links-last {
