@@ -1,0 +1,38 @@
+
+/**
+ * Image style configuration pages.
+ */
+table#socialmedia-iconsets th {
+  padding: 3px 2px;
+  width: 34px;
+}
+
+table#socialmedia-iconsets td {
+  padding: 5px 2px;
+  width: 34px;
+}
+
+/**
+ * Setup wizard styling
+ */
+#socialmedia-setup-4-form #preview {
+  float: left;
+  width: 50%
+}
+
+#socialmedia-setup-4-form #settings {
+  float: right;
+  width: 50%
+}
+
+/* divide platform selectors into two columns */
+.form-item-socialmedia-platforms-site {
+  width: 50%;
+  padding-right: 20px;
+  float: left;
+}
+
+.form-item-socialmedia-platforms-user {
+    width: 50%;
+    float: left;
+}
