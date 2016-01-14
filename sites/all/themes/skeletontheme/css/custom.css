@@ -845,6 +845,10 @@ h2.comment-form,
 // Calendar
 // ************************************************/
 
+.cal-event-OPEN {
+  background-color: yellow;
+}
+
 .calendar a:link, .calendar a:visited {
   color: #414141;
 }
