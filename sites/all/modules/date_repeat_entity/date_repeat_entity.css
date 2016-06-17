@@ -1,0 +1,8 @@
+#node-delete-confirm .form-submit,
+#date-repeat-entity-node-save-confirm .form-submit {
+  display: block;
+}
+
+#edit-update-buttons {
+  background-color: #ccc;
+}

@@ -1,0 +1,7 @@
+<?php
+/**
+ * @file
+ * Code for the Repeating Dates feature.
+ */
+
+include_once 'repeating_dates.features.inc';

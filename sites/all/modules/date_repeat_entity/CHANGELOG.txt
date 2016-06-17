@@ -1,0 +1,14 @@
+Date Repeat Entity 7.x-2.x
+-----------------------------------
+Issue #2184211
+ - User can enable the module per content type.
+ - README.txt updated to note that module works best for node entities
+ - Added dependencies on Entity, List and Text.
+ - Added path to settings page in .info file.
+ - Clone state and master UUID field are now created automatically.
+ - Access to master UUID and clone state now controlled via hook_field_access.
+ - hook_field_attach_form used instead of hook_form_alter.
+
+Date Repeat Entity 7.x-1.x
+-----------------------------------
+Initial release of dev version.

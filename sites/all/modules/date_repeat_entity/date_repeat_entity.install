@@ -1,0 +1,57 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Date Repeat Entity module.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function date_repeat_entity_install() {
+
+  // Ensure that our hooks get called after UUID module hooks because we
+  // depend on UUIDs being in place.  UUID is a dependency of this model so
+  // it should always be installed before this one its weight should be
+  // available to the db_select query below.
+  // Get weight of UUID module from system table.
+  $weight = db_select('system', 's')
+      ->fields('s', array('weight'))
+      ->condition('name', 'uuid', '=')
+      ->execute()
+      ->fetchField();
+
+  // Give our module a heavier weight value.
+  db_update('system')
+      ->fields(array('weight' => $weight + 1))
+      ->condition('name', 'date_repeat_entity', '=')
+      ->execute();
+
+  // Create base fields.
+  _date_repeat_entity_create_base_fields();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function date_repeat_entity_uninstall() {
+
+  // Remove variable.
+  variable_del('date_repeat_entity_bundles_available');
+
+  // Explicitly load module file (which will no longer be available
+  // at this stage.  The module file is where field names are defined.
+  drupal_load('module', 'date_repeat_entity');
+
+  // Remove uuid field from application.
+  $field_master_uuid = field_info_field(DATE_REPEAT_ENTITY_FIELD_MASTER_UUID);
+  if ($field_master_uuid) {
+    field_delete_field($field_master_uuid['field_name']);
+  }
+
+  // Remove clone state field from application.
+  $field_clone_state = field_info_field(DATE_REPEAT_ENTITY_FIELD_CLONE_STATE);
+  if ($field_clone_state) {
+    field_delete_field($field_clone_state['field_name']);
+  }
+}

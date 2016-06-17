@@ -1,0 +1,28 @@
+name = Date Repeat Entity
+description = Manages entities with repeating dates using the Date Repeat API.
+core = 7.x
+package = Date/Time
+
+; dependencies
+dependencies[] = date_api
+dependencies[] = date
+dependencies[] = date_repeat
+dependencies[] = date_repeat_field
+dependencies[] = entity
+dependencies[] = list
+dependencies[] = replicate
+dependencies[] = text
+dependencies[] = uuid
+
+; configuration
+configure = admin/config/date/date_repeat_entity
+
+; stylesheets
+stylesheets[all][] = date_repeat_entity.css
+
+; Information added by Drupal.org packaging script on 2014-05-30
+version = "7.x-2.0"
+core = "7.x"
+project = "date_repeat_entity"
+datestamp = "1401482028"
+
