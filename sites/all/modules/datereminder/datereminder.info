@@ -1,0 +1,14 @@
+name = Date Reminder
+description = "Allow user to request a reminder email before the date of a node"
+dependencies[] = date
+dependencies[] = token
+configure=admin/config/people/datereminder
+package = Date/Time
+core = 7.x
+
+; Information added by Drupal.org packaging script on 2015-08-22
+version = "7.x-1.11"
+core = "7.x"
+project = "datereminder"
+datestamp = "1440217750"
+

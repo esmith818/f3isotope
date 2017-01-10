@@ -1,0 +1,976 @@
+<?php
+
+/**
+ * @file
+ * Support for reminders for nodes with dates.
+ *
+ * datereminder, or date reminder.  A module that lets an authorized user
+ * ask for a reminder to be set at one or more durations before a
+ * scheduled event.  It can be a repeating event; reminders will
+ * be sent at the requested times before each occurance.
+ *
+ * Significant portions of this were blatently borrowed from or
+ * at least inspired by notifications.  Notifications was oh so close
+ * to what I wanted, but just not quite.
+ *
+ * See the README file for a list of outstanding issues.
+ */
+
+
+/**
+ * Implements hook_menu().
+ */
+function datereminder_menu() {
+  module_load_include('inc', 'datereminder', 'datereminder.admin');
+
+  // Since this isn't called often, put code off in another file.
+  return _datereminder_menu();
+}
+
+/**
+ * Implements hook_permission().
+ */
+function datereminder_permission() {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+
+  $perms = array();
+  $perms[DATEREMINDER_ADMINISTER_REMINDERS] = array(
+    'title' => t('Administer reminders'),
+    'description' => t('Control node types that support reminders. Configure reminder email.'),
+    'restrict' => TRUE,
+  );
+  $perms[DATEREMINDER_VIEW_OTHER_USER_REMINDERS] = array(
+    'title' => t('See other user reminders'),
+    'description' => t('See, but not change, reminders of other users'),
+  );
+  $perms[DATEREMINDER_OTHER_EMAIL] = array(
+    'title' => t('Send reminder to arbitrary email address'),
+    'description' => t('Allow user to send reminders to an arbitrary email address'),
+  );
+  $perms[DATEREMINDER_REQUEST_REMINDER] = array(
+    'title' => t('Request reminders'),
+    'description' => t('User can request remeninders to him/herself'),
+  );
+  return $perms;
+}
+/**
+ * Implements hook_nodeapi().
+ *
+ * Note that this is essentially a D6 to D7 adapter. It implements the
+ * D6 api, but calls D7 api equivalents to do the actual work.
+ */
+function datereminder_nodeapi(&$node, $op, $teaser = NULL, $page = NULL) {
+  module_load_include('inc', 'datereminder', 'includes/node');
+
+  switch ($op) {
+    case 'delete':
+      // Clean up anything for this node, even if we don't think the node type
+      // or node has any reminders.
+      datereminder_node_delete($node);
+      break;
+
+    case 'load':
+      // Node is being loaded.
+      datereminder_node_load(array($node->nid => $node), array($node->type));
+      return array();
+
+    case 'view':
+      // Node is about to be viewed.
+      // Question - Should we show reminders in the teaser?
+      $view_mode = ($page ? 'full' : ($teaser ? 'teaser' : '??'));
+      datereminder_node_view($node, $view_mode, NULL);
+      break;
+
+    case 'insert':
+      // Node was just inserted into the database.
+      datereminder_node_insert($node);
+      break;
+
+    case 'update':
+      // Node has been edited. Writing back now.
+      datereminder_node_update($node);
+      break;
+  }
+}
+
+/**
+ * Implements hook_node_insert().
+ *
+ * Set default enabled for the node.
+ */
+function datereminder_node_insert($node) {
+  module_load_include('inc', 'datereminder', 'includes/node');
+  _datereminder_node_insert($node);
+}
+
+/**
+ * Implements hook_node_update().
+ *
+ * Update any reminders that might have changed when the node
+ * (its date, in particular) changed.
+ */
+function datereminder_node_update($node) {
+  module_load_include('inc', 'datereminder', 'includes/node');
+  _datereminder_node_update($node);
+}
+
+/**
+ * Implements hook_node_delete().
+ *
+ * Called just before a node is deleted.
+ *
+ * @todo Delete node enabled.
+ */
+function datereminder_node_delete($node) {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  module_load_include('inc', 'datereminder', DATEREMINDER_DB);
+
+  // This will clear the enable flag for the node, plus clean out any
+  // existing reminders.
+  _datereminder_set_node_enabled($node, DATEREMINDER_TYPE_DISABLED);
+}
+
+/**
+ * Implements hook_node_load().
+ *
+ * Set datereminder_enabled in each node to indicate that reminders are
+ * enabled for the node. Reminder records won't be loaded until needed later.
+ */
+function datereminder_node_load($nodes, $types) {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  module_load_include('inc', 'datereminder', DATEREMINDER_DB);
+
+  $typenabled = array();
+  foreach ($types as $t) {
+    $typenabled[$t] = _datereminder_type_enabled($t);
+  }
+  foreach ($nodes as $nid => $node) {
+    $en = NULL;
+    if ($typenabled[$node->type] >= DATEREMINDER_TYPE_ALLOWED) {
+      $en = _datereminder_get_node_enabled($nid);
+    }
+    if ($en == NULL) {
+      $en = DATEREMINDER_TYPE_DISABLED;
+    }
+    $nodes[$nid]->datereminder_enabled = $en;
+  }
+}
+
+/**
+ * Implements hook_node_view().
+ */
+function datereminder_node_view($node, $view_mode, $langcode) {
+  // Don't bother with teasers or other, or if reminders are
+  // displayed in a tab.
+  $enabled = $node->datereminder_enabled;
+  if (($enabled > 0) && ($view_mode == 'full')) {
+    $wheredisp = variable_get('datereminder_display_loc', DATEREMINDER_IN_NODE);
+    // This node has reminders to display. But only display if this is
+    // full (not teaser) view, and if reminders aren't under a separate tab.
+    global $user;
+    if (!isset($user) || ($user->uid == 0)) {
+      // Special case, if anything other than block display,
+      // maybe we want a link to prompt user to login?
+      if ($wheredisp != DATEREMINDER_AS_BLOCK) {
+        _datereminder_make_anonymous_link($node);
+      }
+    } elseif ($wheredisp == DATEREMINDER_IN_NODE) {
+      module_load_include('inc', 'datereminder', 'includes/defines');
+      // Do we actually want reminders for this node?
+      if ($enabled >= DATEREMINDER_TYPE_ALLOWED) {
+
+        $content = _datereminder_node_output($node, 'node');
+        $content['#weight'] = 50;
+        $node->content['reminder'] = $content;
+      }
+    }
+  }
+
+}
+
+function _datereminder_make_anonymous_link($node) {
+  if (variable_get('datereminder_anonymous_link', false)) {
+    $remanon = array(
+        'title' => _datereminder_anonymous_link($node),
+        'html' => true,
+    );
+    $remanon = array(
+        'reminder_anon' => $remanon,
+    );
+
+    $class = array();
+    $class[] = 'links';
+    $class[] = 'inline';
+    $attributes = array('class' => $class);
+    $remlinks = array(
+        '#links' => $remanon,
+        '#attributes' => $attributes,
+        '#theme' => 'links__node__reminder',
+    );
+    $node->content['links']['reminder'] = $remlinks;
+  }
+}
+
+/**
+ * Add option to node allowing user to request a reminder.
+ */
+function _datereminder_node_output(&$node, $type = 'node') {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+
+  $output = '';
+  if (empty($node->datereminder_enabled)
+          || $node->datereminder_enabled < DATEREMINDER_TYPE_ALLOWED) {
+    return $output;
+  }
+
+  $output = _datereminder_current_reminder_or_link($node, DATEREMINDER_IN_NODE);
+  return $output;
+}
+
+
+/**
+ * Get table of the given node's reminders.
+ */
+function _datereminder_current_user_reminder($node, $type = 'node') {
+  $output = '';
+
+  $fieldset = $type == 'node' ? 'f' : 'm';
+  $output = drupal_get_form('datereminder_form', $node, $fieldset);
+
+  return $output;
+}
+
+/**
+ * Implements hook_node_type().
+ *
+ * Need to delete anything associated with any nodes of this type.
+ *
+ * Note that this is a D6->D7 adapter. It supports the D6 api, but
+ * redirects to the D7 versions.
+ */
+function datereminder_node_type($op, $info) {
+  module_load_include('inc', 'datereminder', 'includes/node_type');
+  switch ($op) {
+    case 'delete':
+      datereminder_node_type_delete($info);
+      break;
+
+    case 'update':
+      datereminder_node_type_update($info);
+      break;
+  }
+}
+
+
+/**
+ * Implements hook_form_alter().
+ *
+ * Add section to node type edit form to enable reminders.
+ */
+function datereminder_form_alter(&$form, &$form_state, $form_id) {
+  switch ($form_id) {
+    case 'node_type_form':
+      module_load_include('inc', 'datereminder', 'includes/node_form');
+      datereminder_alter_node_type_form($form,
+              $form_state, $form['#node_type']->type);
+      break;
+
+    default:
+      if (!empty($form['type']['#value'])) {
+        if ($form_id == $form['type']['#value'] . '_node_form') {
+          module_load_include('inc', 'datereminder', 'includes/node_form');
+          datereminder_alter_node_form($form, $form_state, $form_id);
+        }
+      }
+      break;
+  }
+}
+
+/**
+ * Make sure that the user doesn't try to set node enabled to silly value.
+ *
+ * Note: This is only invoked if reminders are allowed for this node type.
+ *
+ * @param array $form
+ *   The raw form.
+ * @param array $form_state
+ *   State info about form, including submitted values.
+ */
+function _datereminder_form_validate_node(&$form, &$form_state) {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  // What is user setting it to?
+  $en = $form_state['values']['datereminder_enabled'];
+  if (($en != DATEREMINDER_TYPE_DISABLED)
+   && ($en != DATEREMINDER_TYPE_ON)
+   && ($en != DATEREMINDER_TYPE_RETAIN)) {
+    form_set_error('datereminder_enabled',
+            t("That's not a legal reminder setting"), 'error');
+  }
+}
+/**
+ * Handle form submit when admin enables or disables reminder for a node.
+ *
+ * Note: We don't need to check user access here. We'll only come here
+ * if datereminder_alter_node_form() said we should. And it will only do
+ * that if it's OK for the user to enable or disable reminders on this node.
+ * Note that if reminders are enabled for this node type, anyone who can
+ * modify a node of that type can enable or disable reminders.
+ *
+ * @param array &$form
+ *   The submitted form
+ * @param array &$form_state
+ *   State of submitted form.
+ *
+ * @todo
+ *   Move this into include/node.inc. Requires updating node_form.inc
+ *   to direct the form update there.
+ */
+function _datereminder_form_submit_node(&$form, &$form_state) {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  module_load_include('inc', 'datereminder', DATEREMINDER_DB);
+
+  $node = $form['#node'];
+  $newen = $form_state['values']['datereminder_enabled'];
+
+  $node->datereminder_enabled = $newen;
+}
+
+/**
+ * Get enablement for a content type.
+ *
+ * Functionally, it would make sense to put this in node_type.inc, but
+ * it's used in so many places...
+ *
+ * @param string $type
+ *   The content type
+ *
+ * @return int
+ *   Enum telling default value for reminders for this type.
+ */
+function _datereminder_type_enabled($type) {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  return variable_get("datereminder_enabled_$type", DATEREMINDER_TYPE_DISABLED);
+}
+
+
+/**
+ * Get existing reminder info for a node and current user.
+ *
+ * @todo Pull in collateral info at the same time, like node title
+ * and user name.
+ */
+function _datereminder_get_node_user_reminders(&$node) {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  global $user;
+  if (($user->uid == 0) || !user_access(DATEREMINDER_REQUEST_REMINDER)) {
+    return NONE;
+  }
+  if (!isset($node->reminders)) {
+    module_load_include('inc', 'datereminder', DATEREMINDER_DB);
+    $rem = _datereminder_load_reminders(
+            array('uid' => $user->uid, 'nid' => $node->nid),
+            $node, 'leadtime');
+    $node->reminders = array();
+    // We want reminders in node keyed by rid.
+    foreach ($rem as $r) {
+      $node->reminders[$r->rid] = $r;
+    }
+  }
+  return $node->reminders;
+}
+
+
+/**
+ * Callback on validate from datereminder_form.
+ *
+ * Did the user put reasonable values in the form?
+ */
+function _datereminder_form_validate_user($form, &$form_state) {
+  global $user;
+  module_load_include('inc', 'datereminder', 'includes/defines');
+
+  $ok = TRUE;
+  $v = $form_state['values'];
+
+  $nid = $v['nid'];
+  $node = node_load($nid);
+  if (empty($node)
+      || ($user->uid == 0)
+      || !user_access(DATEREMINDER_REQUEST_REMINDER)) {
+    form_set_error(NULL, t('Permission error'), 'error');
+    return FALSE;
+  }
+
+  // Any reason not to do this?
+  $form_state['datereminder_node'] = $node;
+
+  // Get existing reminders.
+  $r = _datereminder_get_node_user_reminders($node);
+
+  $other_email = user_access(DATEREMINDER_OTHER_EMAIL);
+  $rows = $v['rids'];
+
+  if (!isset($rows) or $rows == '') {
+    form_set_error(NULL, t('Corrupted form'));
+    return FALSE;
+  }
+
+  $rows = explode(',', $rows);
+  if (count($rows) >
+      variable_get('datereminder_max_reminders', DATEREMINDER_MAX_REMINDERS)) {
+    form_set_error(NULL, t('Permission error'), 'error');
+    return;
+  }
+
+  foreach ($rows as $rid) {
+    if (substr($rid, 0, 1) != 'n') {
+      if (!isset($r[$rid])) {
+        form_set_error(NULL, t('Permission error'), 'error');
+        return;
+      }
+    }
+
+    if ($other_email && $ok) {
+      $formid = "datereminder_email_$rid";
+      $e = $v[$formid];
+      if ($e) {
+        $inemails = explode(',', $e);
+        $outemails = array();
+        foreach ($inemails as $email) {
+          $email = trim($email);
+          if ($email) {
+            if (valid_email_address($email)) {
+              $outemails[] = $email;
+            }
+            else {
+              form_set_error($formid,
+                  t("'@email' is a bad address", array('@email' => $email)));
+              $ok = FALSE;
+              break;
+            }
+          }
+        }
+        if ($ok) {
+          $form_state['values'][$formid] = implode(',', $outemails);
+        }
+      }
+    }
+  }
+
+  return $ok;
+}
+
+/**
+ * Callback on submit from datereminder_form.
+ *
+ * @todo The "send-now" operation sends email using the last reminder
+ * found in the list, which may not correspond to anything useful. For
+ * normal users, this isn't an issue. If the user can send emails, though,
+ * the reminder used determines the target email address.  Probably should
+ * let priviledged user select which email to send to.
+ */
+function _datereminder_form_submit_user($form, &$form_state) {
+  global $user;
+
+  $v = $form_state['values'];
+
+  $node = $form_state['datereminder_node'];
+  $rems = _datereminder_get_node_user_reminders($node);
+  $rows = explode(',', $v['rids']);
+
+  module_load_include('inc', 'datereminder', 'includes/date');
+  $df = _datereminder_get_node_datefield($node);
+  $other_email = user_access(DATEREMINDER_OTHER_EMAIL);
+
+  $changedrems = array();
+  foreach ($rows as $rtag) {
+    $changed = FALSE;
+    $newtime = FALSE;
+    if (substr($rtag, 0, 1) == 'n') {
+      // This is a new reminder.
+      $r = new stdClass();
+      $ldtag = "datereminder_lead_$rtag";
+      if (isset ($v[$ldtag])) {
+        $r->leadtime = $v[$ldtag];
+        if ($r->leadtime > 0) {
+          $rid = -(substr($rtag, 1));
+          $r->nid = $node->nid;
+          $r->node = $node;
+          $r->uid = $user->uid;
+          $r->user = $user;
+          $r->next_due = 0;
+          $r->rid = $rid;
+          $r->expired = 0;
+
+          if ($other_email) {
+            $r->email = $v["datereminder_email_$rtag"];
+          }
+          else {
+            $r->email = '';
+          }
+          $newtime = TRUE;
+        }
+      }
+    }
+    else {
+      // This is an existing reminder.
+      $rid = $rtag;
+      $r = $rems[$rid];
+      $ltn = $v["datereminder_lead_$rtag"];
+      if ($ltn != $r->leadtime) {
+        $r->leadtime = $ltn;
+        $newtime = TRUE;
+      }
+      if ($other_email) {
+        $em = $v["datereminder_email_$rtag"];
+        if ($em != $r->email) {
+          $r->email = $em;
+          $changed = TRUE;
+        }
+      }
+    }
+
+    if ($newtime) {
+      _datereminder_get_next_reminder($r, $df);
+      if (!isset($r->next_due)) {
+        drupal_set_message(t("Sorry, but it's too late to send that reminder"),
+                'error');
+        return;
+      }
+      $changed = TRUE;
+    }
+    if ($changed) {
+      $changedrems[$rid] = $r;
+    }
+  }
+
+  if (count($changedrems) > 0) {
+    _datereminder_set_reminders($changedrems);
+    unset($node->reminders);
+  }
+
+  if ($v['send-now']) {
+    module_load_include('inc', 'datereminder', 'includes/mailer');
+    $r = (object)'r';
+    $r->uid = $user->uid;
+    $r->nid = $node->nid;
+    $r->node = $node;
+    $r->user = $user;
+    $r->leadtime = 0;
+    $r->next_due = NULL;
+    $r->email = NULL;
+
+    if (_datereminder_send_reminder($r)) {
+      drupal_set_message(t('An email reminder has been sent'));
+    }
+    else {
+      drupal_set_message(t('Sorry, there was a problem sending mail'), 'error');
+    }
+  }
+}
+
+/**
+ * Callback to delete a group of reminders from admin menu form.
+ */
+function _datereminder_admin_delete_set($form, &$form_state) {
+  $v = $form_state['values'];
+  $reminders = $v['reminders'];
+
+  $dset = array();
+  foreach ($reminders as $rem) {
+    if ($rem > 0) {
+      $dset[] = $rem;
+    }
+  }
+
+  if (count($dset) > 0) {
+    module_load_include('inc', 'datereminder', 'includes/defines');
+    module_load_include('inc', 'datereminder', DATEREMINDER_DB);
+    _datereminder_delete_rids($dset);
+  }
+}
+
+/**
+ * Implements hook_perm().
+ */
+function datereminder_perm() {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  return array(
+    DATEREMINDER_ADMINISTER_REMINDERS,
+    DATEREMINDER_VIEW_OTHER_USER_REMINDERS,
+    DATEREMINDER_OTHER_EMAIL,
+    DATEREMINDER_REQUEST_REMINDER,
+  );
+}
+
+/**
+ * Utility function to load node and user objects for a reminder when needed.
+ *
+ * @param reminder  $r
+ *   Reminder to be completed
+ */
+function _datereminder_complete_reminder(&$r) {
+  if (!isset($r->node)) {
+    $r->node = node_load($r->nid);
+  }
+  if (!isset($r->user)) {
+    $r->user = user_load($r->uid);
+  }
+}
+
+
+/**
+ * Implements hook_tokens().
+ */
+function datereminder_tokens($type, $tokens, $data, $options) {
+  $ret = array();
+
+  // Check that this is for us.
+  if ($type == 'datereminder') {
+    $r = $data['datereminder'];
+    if ($r) {
+      module_load_include('inc', 'datereminder', 'includes/date');
+      $datefield = _datereminder_get_datefield($r);
+      $tz = (isset($r->user->timezone) &&
+                variable_get('configurable_timezones', 1)) ?
+              $r->user->timezone : NULL;
+
+      $next_due = $r->next_due;
+      // We want then next-date tokens to show next occurrance after
+      // the time this reminder will be sent. But if the reminder isn't
+      // currently scheduled, use 'now'.
+      if (isset($next_due)) {
+        $next_due = _datereminder_internal_date_to_datetime($next_due);
+      }
+      else {
+        $next_due = _datereminder_now();
+      }
+      $dobj = _datereminder_get_occurance_after_date($datefield, $next_due);
+
+      if (isset($dobj)) {
+        $tstamp = _datereminder_date_format_internal($dobj);
+
+        // OK, so we have the time. Go head and format time.
+        foreach ($tokens as $name => $orig) {
+          if (substr($name, 0, 5) == 'next-') {
+            $fmt = substr($name, 5);
+            if ($fmt == 'short' || $fmt == 'medium' || $fmt == 'long') {
+              $f = format_date($tstamp, $fmt, '', $tz);
+            }
+            else {
+              $f = format_date($tstamp, 'custom', $fmt, $tz);
+            }
+            $ret[$orig] = $f;
+          }
+        }
+      }
+      else {
+        foreach ($tokens as $name => $orig) {
+          $ret[$orig] = t('Past');
+        }
+      }
+    }
+  }
+
+  return $ret;
+}
+
+/**
+ * Implements hook_token_info().
+ *
+ * @returns array
+ *   Array describing the types of tokens supported.
+ */
+function datereminder_token_info() {
+  $tokens = array();
+
+  $tokens['next-short'] = array(
+    'name' => t('Next date, short form'),
+    'description' => t('The date of the next occurrance of this event, short form.'),
+  );
+  $tokens['next-medium'] = array(
+    'name' => t('Next date, medium form'),
+    'description' => t('The date of the next occurrance of this event, medium form.'),
+  );
+  $tokens['next-long'] = array(
+    'name' => t('Next date, long form'),
+    'description' => t('The date of the next occurrance of this event, long form.'),
+  );
+
+  $type = array(
+    'name' => t('Date reminders'),
+    'description' => t('Information about upcoming events when sending reminders.'),
+    'needs-data' => 'datereminder',
+  );
+
+  return array(
+    'tokens' => array('datereminder' => $tokens),
+    'types' => array('datereminder' => $type),
+  );
+}
+
+/**
+ * Implements hook_cron().
+ *
+ * Check to see if we need to send any reminders.
+ */
+function datereminder_cron() {
+  module_load_include('inc', 'datereminder', 'includes/cron');
+  _datereminder_cron();
+}
+
+/**
+ * Check if this user can access reminders at all.
+ *
+ * @global type $user
+ *
+ * @param user $acct
+ *   A user struct, maybe not the current one
+ *
+ * @return bool
+ *   TRUE if requested access is allowed
+ */
+function datereminder_access_user($acct) {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  global $user;
+
+  if ($acct && $acct->uid && ($user->uid == $acct->uid)) {
+    return user_access(DATEREMINDER_REQUEST_REMINDER);
+  }
+  return FALSE;
+}
+
+/**
+ * Check if this user can access reminders for this node.
+ *
+ * @param node $node
+ *   The node
+ * @param string $acc
+ *   What kind of access is requested?
+ *   'own' means set/view own reminder
+ *   'all' means view others' reminder
+ * @param string loc
+ *   Where is the reminder to be displayed?
+ */
+function datereminder_allowed_access_node($node = NULL,
+        $acc = 'own',
+        $loc = DATEREMINDER_IN_NODE) {
+  global $user;
+  if (!isset($user) || ($user->uid == 0)) {
+    return FALSE;
+  }
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  // First, be sure reminders are on for this.
+  if (!isset($node) || ($node->datereminder_enabled != DATEREMINDER_TYPE_ON)) {
+    return FALSE;
+  }
+
+  $accloc = variable_get('datereminder_display_loc', DATEREMINDER_IN_NODE);
+  if ($loc != $accloc) {
+    return FALSE;
+  }
+
+  if (user_access(DATEREMINDER_VIEW_OTHER_USER_REMINDERS)
+          || user_access(DATEREMINDER_ADMINISTER_REMINDERS)) {
+    return TRUE;
+  }
+
+  if (($acc != 'own') || !user_access(DATEREMINDER_REQUEST_REMINDER)) {
+    return FALSE;
+  }
+  module_load_include('inc', 'datereminder', 'includes/datereminder_form');
+  return _datereminder_has_future_dates($node);
+}
+
+/**
+ * Check if this user see another specific user's reminders.
+ *
+ * @param user $u
+ *   The user struct. NULL means all users.
+ */
+function datereminder_allowed_access_user($u = NULL) {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  global $user;
+
+  if ($user->uid == 0) {
+    return FALSE;
+  }
+
+  if (user_access(DATEREMINDER_ADMINISTER_REMINDERS) || user_access(DATEREMINDER_VIEW_OTHER_USER_REMINDERS)) {
+    return TRUE;
+  }
+
+  if (!user_access(DATEREMINDER_REQUEST_REMINDER)) {
+    return FALSE;
+  }
+
+  return (isset($u) && ($u->uid == $user->uid));
+}
+
+
+/**
+ * Implements hook_theme().
+ */
+function datereminder_theme() {
+  return array(
+    'datereminder_manage_reminders' => array(
+      'render element' => 'form table',
+      'file' => 'datereminder_form.inc',
+      'path' => drupal_get_path('module', 'datereminder') . '/includes',
+    ),
+
+    'datereminder_table' => array(
+      'render element' => 'form',
+      'file' => 'datereminder_form.inc',
+      'path' => drupal_get_path('module', 'datereminder') . '/includes',
+    ),
+  );
+}
+
+/**
+ * Build the user reminder form.
+ *
+ * @param string $form
+ *   Name of the form? (New in D7)
+ * @param array $form_state
+ *   What's built so far
+ * @param node $node
+ *   The fully loaded node object.
+ * @param array $fieldset
+ *   Boolean that indicates if the reminder form should be in a fieldset.
+ */
+function datereminder_form($form, &$form_state, $node, $fieldset = 'f') {
+  module_load_include('inc', 'datereminder', 'includes/datereminder_form');
+  return _datereminder_form($form, $form_state, $node, $fieldset);
+}
+
+/**
+ * Build a form with a list of reminders.
+ *
+ * @param array $form_state
+ *   Current state of the form
+ * @param object $arg
+ *   Can be node or user object, depending on $content
+ * @param string $content
+ *   Determines content of the list. Allowed values:
+ *    'all_node' -- Show all reminders for this node
+ *    'all_user' -- Show all reminders for a given user
+ *    'all' -- Show all reminders
+ * @param string $fieldset
+ *   String that indicates if the reminder form should be in a fieldset.
+ *
+ * @todo This really ought to be combined with datereminder_form().
+ */
+function datereminder_form_summary($form, &$form_state,
+        $arg,
+        $content = 'all_node',
+        $fieldset = 'f') {
+  module_load_include('inc', 'datereminder', 'includes/datereminder_form');
+
+  return _datereminder_form_summary($form, $form_state, $arg,
+        $content, $fieldset);
+}
+
+/**
+ * Implements hook_user_delete().
+ *
+ * Delete any reminders associated with this user.
+ */
+function datereminder_user_delete($account) {
+  db_delete('datereminder')
+    ->condition('uid', $account->uid)
+    ->execute();
+}
+
+/**
+ * Implements hook_user_cancel().
+ */
+function datereminder_user_cancel($edit, $account, $method) {
+  // For the purposes of Date Reminder, there's no reason to keep reminders
+  // for a cancelled user.
+  datereminder_user_delete($account);
+}
+
+/**
+ * Implements hook_block_info().
+ *
+ * Tell Drupal about the Subscriptions Interface block.
+ *
+ * @ingroup hooks
+ */
+function datereminder_block_info() {
+  $blocks[0]['info'] = t('Reminder request');
+  $blocks[0]['cache'] = DRUPAL_CACHE_PER_PAGE;
+  $blocks[0]['region'] = 'content';
+  return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ *
+ * Define the Subscriptions Interface block for node pages (depending on the Display Settings).
+ *
+ * @param int $delta
+ *
+ * @return array|null
+ *
+ * @ingroup hooks
+ */
+function datereminder_block_view($delta = 0) {
+  module_load_include('inc', 'datereminder', 'includes/defines');
+  $n = menu_get_object();
+  $ret = NULL;
+  $content = _datereminder_current_reminder_or_link($n, DATEREMINDER_AS_BLOCK);
+
+  if (isset($content)) {
+    $ret = array(
+        'subject' => t('Reminders'),
+        'content' => $content,
+    );
+  }
+  return $ret;
+}
+
+/**
+ * Returns either a reminder form or, for anonymous user and if
+ * so enabled, an invitation to log in or register.
+ * @global type $user
+ * @param type $n - The node being acessed
+ * @param type $acctype DATEREMINDER_AS_BLOCK or ..._NODE
+ * @return array() - Reminder block to display.
+ */
+function _datereminder_current_reminder_or_link($n, $acctype) {
+  $content = NULL;
+  global $user;
+  if (!isset($user) || ($user->uid == 0)) {
+    if (isset($n) 
+            && ($n->datereminder_enabled == DATEREMINDER_TYPE_ON)
+            && variable_get('datereminder_anonymous_link', false)
+            && (variable_get('datereminder_display_loc', DATEREMINDER_IN_NODE)
+                == $acctype)) {
+      $content = _datereminder_anonymous_link($n);
+
+      $s = array(
+          '#field_type' => 'text',
+          '#markup' => $content,
+      );
+      $content = $s;
+    }
+  } elseif (datereminder_allowed_access_node($n, 'own', $acctype)) {
+    $content = _datereminder_current_user_reminder($n, 'node');
+  }
+
+  return $content;
+}
+
+function _datereminder_anonymous_link($node) {
+  $q = array('query' => array('destination' => 'node/' . $node->nid));
+  $link = t('!login or !register to request reminders',
+            array(
+              '!login' => l(t('Log in'), 'user/login', $q),
+              '!register' => l(t('register'), 'user/register', $q),
+            ));
+
+  $link = '<div class=\'request-reminder-anonymous\'>' . $link . '</div>';
+  return $link;
+}

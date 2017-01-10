@@ -497,7 +497,7 @@ function views_send_confirm_form($form, &$form_state, $view, $output) {
     '#type' => 'item',
     '#title' => t('From'),
     '#markup' => '<div class="views-send-preview-value">' .
-      (empty($from_name) ? $from_mail : $from_name . check_plain(' <' . $from_mail . '>')) .
+        check_plain(_views_send_format_address($from_mail, $from_name, FALSE)) .
       '</div>',
   );
 
@@ -517,7 +517,7 @@ function views_send_confirm_form($form, &$form_state, $view, $output) {
     }
     $mail_addresses = _views_send_get_field_value_from_views_row($view, $row_id, $to_mail_field, 'mail');
     foreach ($mail_addresses as $mail_address) {
-      $recipients[] = check_plain(empty($to_name) ? $mail_address : trim($to_name) . ' <' .  $mail_address . '>');
+      $recipients[] = check_plain(_views_send_format_address($mail_address, $to_name, FALSE));
     }
   }
 
@@ -529,7 +529,7 @@ function views_send_confirm_form($form, &$form_state, $view, $output) {
   $form['subject'] = array(
     '#type' => 'item',
     '#title' => t('Subject'),
-    '#markup' => '<div class="views-send-preview-value">' . $configuration['views_send_subject'] . '</div>',
+    '#markup' => '<div class="views-send-preview-value">' . check_plain($configuration['views_send_subject']) . '</div>',
   );
   $form['message'] = array(
     '#type' => 'item',
@@ -539,7 +539,7 @@ function views_send_confirm_form($form, &$form_state, $view, $output) {
 
   $headers = array();
   foreach (_views_send_headers($configuration['views_send_receipt'], $configuration['views_send_priority'], $configuration['views_send_from_mail'], $configuration['views_send_headers']) as $key => $value) {
-    $headers[] = $key . ': ' . $value;
+    $headers[] = check_plain($key . ': ' . $value);
   }
 
   $form['headers'] = array(

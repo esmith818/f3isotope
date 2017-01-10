@@ -1,0 +1,117 @@
+Date Reminder 7.x-1.11 2015-08-21
+----------------------------------------
+#2431063 by dwillcox: Fix calculation of next reminder when date
+                      of node is changed.
+#2454565 by dwillcox: Protect against empty date field
+
+Date Reminder 7.x-1.10 2015-03-04
+----------------------------------------
+#1542870 by dwillcox: Support for a few simple Rules.
+#2368295 by dwillcox: Add option to display "login or register" prompt to anonymous user.
+
+Date Reminder 7.x-1.9 2014-11-03
+----------------------------------------
+#2318473 by dwillcox: Use system TZ when sending email when the option
+                      letting users set their own timezone is disabled.
+#2363655 by dwillcox: Support showing reminder form as a block.
+
+Date Reminder 7.x-1.8 2014-03-14
+----------------------------------------
+#2215383, #2212349 by dwillcox: Add missing module_load_include()
+                      and form_load_include() calls.
+#2217103 by dwillcox: Clean up menu a bit for nodes past last date.
+
+Date Reminder 7.x-1.7 2014-02-04
+----------------------------------------
+#2172937 by dwillcox: Clean up validating email addresses in reminder form.
+#2187437 by dwillcox: Add check to recover from bad variable setting.
+
+Date Reminder 7.x-1.6 2013-12-29
+----------------------------------------
+#2138255 by dwillcox: Option in node type edit form to enable reminders
+                      for already-existing nodes.
+#2138245 by dwillcox: Handling date fields with "no timezone" specified.
+#2164077 by dwillcox: Don't allow anonymous user access, even if administrator
+                      tries to allow it.
+#2164079 by dwillcox: Don't html expand node title in menu.
+
+Date Reminder 7.x-1.5 2013-10-06
+----------------------------------------
+#2101087 by dwillcox: Eliminate STRICT warning when sending test email.
+
+Date Reminder 7.x-1.4 2013-09-27
+----------------------------------------
+#2099921 by dwillcox: Ensure cache cleared when "reminders as tab" is changed.
+
+Date Reminder 7.x-1.3 2013-09-27
+----------------------------------------
+Nonfunctional. Don't use!
+
+Date Reminder 7.x-1.2 2013-09-10
+----------------------------------------
+#2042013 by dwillcox: Don't let anonymous user try to use Date Reminder,
+      even if the administrator tries to enable that.
+#1957144 by dwillcox: Attempting to eliminate E_STRICT warning.
+
+Date Reminder 7.x-1.1 2013-04-10
+---------------------------------------
+#1957144 by dwillcox: Eliminate some E_STRICT errors.
+
+Date Reminder 7.x-1.0 2013-03-11
+---------------------------------------
+40+ installs, over two weeks since last beta release with no further reports.
+I think this can be called "done." No changes since 7.x-1.0-beta2.
+
+Date Reminder 7.x-1.0-beta2 2013-02-21
+---------------------------------------
+#1923838 by dwillcox: Fix incompatibility with Messaging.
+
+Date Reminder 7.x-1.0-beta1 2013-01-31
+---------------------------------------
+Incorporates all of the 7.x-1.0-beta1 changes:
+#1900216 by dwillcox: Remove obsolete messaging.php file.
+#1903782 by dwillcox: Fix undefined property errors.
+#1876736 by dwillcox: Eliminate vestiges of html support in reminders.
+#1878954 by dwillcox: Fix ref to undefined variable when adding node with
+                      reminders disabled.
+#1855940 by dwillcox: Additional fixes to install/uninstall.
+#1855944 by dwillcox: Get rid of calls to content module on install/uninstall.
+#1676628 by dwillcox: First Drupal 7 release. It basically works, but this
+    is an alpha release, so there could be rough spots. Please file issues
+    if if you encounter problems.
+
+Date Reminder 6.x-2.x
+---------------------------------
+#1772848 by dwillcox: Re-architecture in preparation for a Drupal 7 version.
+    Note that this update provides no new user features. And note that updating
+    to this version changes the database schema, so save your database if
+    you think you might want to go back.
+
+Date Reminder 6.x-1.1 2012-10-06
+---------------------------------
+#1805560 by dwillcox: Order reminders in list in a meaningful way.
+#1718444 by dwillcox: Add option to specify number of reminders a user can add
+    at once, plus eliminate the hard limit of 5 reminders per node per user.
+#1802542 by dwillcox: Eliminate create_date_from_format() to stick with php 5.2.
+#1802542 by dwillcox: Properly default field in node edit form when there
+    are several date field candidates in the node type.
+
+Date Reminder 6.x-1.0, 2012-09-28
+---------------------------------
+No change from 1.0-beta3.
+
+Date Reminder 6.x-1.0-beta3, 2012-08-30
+---------------------------------------
+#1748696 by dwillcox: Clean up handling of different date type fields.
+
+Date Reminder 6.x-1.x-beta2, 2012-08-22
+---------------------------------------
+#1720084 by dwillcox: Fix calculation of next occurrence for date (as opposed
+    to datetime) date CKK fields.
+
+Date Reminder 6.x-1.x-beta1, 2012-08-06
+---------------------------------
+
+#1693874 by dwillcox: Keep reminders around for a while after last use. Also
+    fix a few stylistic issues, and add CHANGELOG.txt.
+#1686696 by dwillcox: Promoted from sandbox to full project.

@@ -1,0 +1,208 @@
+<?php
+/**
+ * @file
+ * Stuff Druapl needs to install this module.
+ */
+
+/**
+ * implements hook_enable to change the weight of
+ * datereminder. The weight needs to be highish to ensure
+ * that the date field is updated before datereminder_node_update()
+ * is called.
+ */
+function datereminder_enable() {
+  db_update('system')
+      ->fields(array('weight' => 500))
+      ->condition('type', 'module')
+      ->condition('name', 'datereminder')
+      ->execute();
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function datereminder_uninstall() {
+
+  // Delete all datereminder-related variables.
+  $result = db_select('variable', 'v')
+    ->fields('v', array('name'))
+    ->condition('name', 'datereminder%%', 'LIKE')
+    ->execute();
+
+  while ($v = $result->fetchObject()) {
+    variable_del($v->name);
+  }
+}
+
+
+/**
+ * Implements hook_schema().
+ *
+ * Tell Drupal about database tables and content.
+ */
+function datereminder_schema() {
+  $schema['datereminder_enable'] = array(
+    'description' => 'Reminder per-node enable flags',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'Primary key: node id',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'enabled' => array(
+        'description' => '0: No reminders, 1: Saved reminders, 3: Allow reminders',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('nid'),
+  );
+  $schema['datereminder'] = array(
+    'description' => "Information on user's reminders",
+    'fields' => array(
+      'rid' => array(
+        'description' => 'Primary key, reminder id',
+        'type' => 'serial',
+        'size' => 'normal',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'nid' => array(
+        'description' => 'node id',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'uid' => array(
+        'description' => 'user id',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'leadtime' => array(
+        'description' => 'How long before event to send reminder in seconds',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'email' => array(
+        'description' => 'If allowed, alternate email address',
+        'type' => 'varchar',
+        'length' => 255,
+        'not null' => FALSE,
+      ),
+      'expired' => array(
+        'description' => "If TRUE, delete after 'next'",
+        'type' => 'int',
+        'size' => 'tiny',
+        'default' => 0,
+        'not null' => TRUE,
+      ),
+      'next_due' => array(
+        'description' => 'Time for reminder as Unix epoch',
+        'type' => 'int',
+        'size' => 'normal',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('rid'),
+    'indexes' => array(
+      'uid' => array('uid'),
+      'nid' => array('nid'),
+    ),
+  );
+
+  return $schema;
+}
+
+/**
+ * Adding new 'expired' field.
+ */
+function datereminder_update_6003() {
+  $ret = array();
+  $fd = array(
+    'description' => "If TRUE, delete after 'next'",
+    'type' => 'int',
+    'size' => 'tiny',
+    'default' => 0,
+    'not null' => TRUE,
+  );
+  db_add_field($ret, 'datereminder', 'expired', $fd);
+
+  return $ret;
+}
+
+/**
+ * Convert `next` from datestamp to Unix timestamp.
+ */
+function datereminder_update_6200() {
+  $ret = array();
+
+  // First, add field to hold converted values.
+  $fd = array(
+    'description' => 'Time for reminder as Unix epoch',
+    'type' => 'int',
+    'size' => 'normal',
+    'unsigned' => TRUE,
+    'not null' => TRUE,
+    'default' => 0,
+  );
+  db_add_field($ret, 'datereminder', 'next_due', $fd);
+
+  // The following forces Drupal to start using the new schema. That's
+  // necessary for drupal_write_record() to write out the new field.
+  drupal_get_schema('datereminder', TRUE);
+
+  // Now, read all records and generate new value.
+  $utc = new DateTimeZone('UTC');
+  $q = db_query('SELECT * from {datereminder}');
+  while ($r = db_fetch_object($q)) {
+    $next_due = DateTime::createFromFormat('Y-m-d H:i:s', $r->next, $utc);
+    $r->next_due = intval($next_due->format('U'));
+    drupal_write_record('datereminder', $r, 'rid');
+  }
+
+  // Get rid of old 'next' field. Henceforth, we'll use only next_due.
+  db_drop_field($ret, 'datereminder', 'next');
+  return $ret;
+}
+
+/**
+ * Get rid of "format" in datereminder_mail_body variable.
+ */
+function datereminder_update_7001() {
+  module_load_include('inc', 'datereminder', 'includes/mailer');
+  $ebody = _datereminder_email_body();
+  if (is_array($ebody)) {
+    // Need to convert from old format.
+    if (isset($ebody['value'])) {
+      $ebody = $ebody['value'];
+      variable_set('datereminder_mail_body', $ebody);
+    }
+    else {
+      variable_del('datereminder_mail_body');
+    }
+  }
+  return array();
+}
+
+/**
+ * Change datereminder_as_tab variable to datereminder_display_loc. 
+ */
+function datereminder_update_7002() {
+  module_load_include('inc', 'datereminder', 'includes/defomes');
+
+  $oldval = variable_get('datereminder_as_tab', FALSE);
+  $newval = $oldval ? DATEREMINDER_AS_TAB : DATEREMINDER_IN_NODE;
+  variable_set('daterminder_display_loc', $newval);
+  variable_del('datereminder_as_tab');
+  return array();
+}
