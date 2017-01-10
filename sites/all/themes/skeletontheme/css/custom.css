@@ -726,7 +726,7 @@ li.comment-reply a:hover {
 
 h2.comment-form,
 .form-type-item {
-   display: none;
+   //display: none;
 }
 
 .comment {
@@ -846,7 +846,17 @@ h2.comment-form,
 // ************************************************/
 
 .cal-event-OPEN {
-  background-color: yellow;
+     background-color: #FFFFFF;
+     -webkit-animation: random 5s infinite;
+     animation: random 10s infinite;
+     transition: all 0.3s ease-out;
+}
+
+@keyframes  random {
+    20% { background-color: #FFFFFF ; }
+    40% { background-color: #FFFFFF ; }
+    60% { background-color: #FFFFFF ; }
+    80% { background-color: #FFFF00 ; }   
 }
 
 .calendar a:link, .calendar a:visited {
@@ -1008,6 +1018,14 @@ div.profile .field-name-field-sub-region {
 
 .f1-location a:hover {
    color: #515151 !important;
+}
+
+/* *************************************************
+// F1 (Edit View)
+// ************************************************/
+
+#f1-event-node-form div .vertical-tabs {
+  display: none !important;
 }
 
 /* *************************************************
