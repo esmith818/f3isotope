@@ -5,4 +5,10 @@ sites/*/settings*.php
 sites/*/files
 sites/*/private
 
+# Ignore backup files and dot files custom to bluehost
 .htaccess
+.htaccess.*
+.php.ini.*
+php.ini.bak.*
+.editorconfig
+error_log
