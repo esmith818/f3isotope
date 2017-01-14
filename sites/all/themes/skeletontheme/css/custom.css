@@ -83,6 +83,11 @@ ul.tabs a:hover {
    color: #a80707 !important;
 }
 
+#site-slogan {
+  color: #a80707 !important;
+  padding-top: 16px;
+}
+
 #page-title {
    color: #a80707;
 }
