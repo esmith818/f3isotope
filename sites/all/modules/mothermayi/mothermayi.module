@@ -6,6 +6,7 @@
  * entered before a new account can be created.
  */
 
+define('MOTHERMAYI_PATH', 'admin/config/people/mothermayi');
 define('MOTHERMAYI_ADMINISTER_PASSWORD', 'Administer mothermayi password');
 
 /**
@@ -18,7 +19,7 @@ define('MOTHERMAYI_WEIGHT_DEFAULT', '10');
 function mothermayi_menu() {
   $items = array();
 
-  $items['admin/config/people/mothermayi'] = array(
+  $items[MOTHERMAYI_PATH] = array(
     'title' => 'Mother May I',
     'description' => 'Specify \'secret word\' needed to create a new account',
     'page callback' => 'drupal_get_form',
@@ -42,7 +43,7 @@ function mothermayi_settings_form() {
     '#description' => t('Specify a site-specific word that potential users must enter before applying for an account. See discussion at !url.',
             array('!url' => l(t('the Drupal Mother May I site'), 'http://drupal.org/project/mothermayi'))),
   );
-  $filterval = variable_get('mothermayi_format', filter_default_format());
+
   $fs['mothermayi_secret_word'] = array(
     '#type' => 'textfield',
     '#title' => t('Secret word required to create an account'),
@@ -65,6 +66,11 @@ function mothermayi_settings_form() {
     '#default_value' => '',
     '#description' => t('If you put an entry here, it will be checked against your secret word.'),
   );
+  $defaults = array(
+    'value' => '',
+    'format' => filter_default_format(),
+  );
+  $secret_hint = variable_get('mothermayi_secret_hint', $defaults);
   $fs['mothermayi_secret_hint'] = array(
     '#base_type' => 'textarea',
     '#type' => 'text_format',
@@ -72,9 +78,9 @@ function mothermayi_settings_form() {
     '#cols' => 40,
     '#rows' => 5,
     '#resizable' => TRUE,
-    '#default_value' => variable_get('mothermayi_secret_hint', ''),
+    '#default_value' => $secret_hint['value'],
     '#description' => t('If specified, this will be listed as a hint to the knowledgable user.'),
-    '#format' => $filterval,
+    '#format' => $secret_hint['format'],
   );
   $form['mothermayi_fs1'] = $fs;
 
@@ -165,11 +171,6 @@ function _mothermayi_settings_form_validate($form, &$form_state) {
  */
 function _mothermayi_settings_form_submit($form, &$form_state) {
 
-  // Seems like there should be a better way to do this. But it works.
-  $hint = $form_state['values']['mothermayi_secret_hint'];
-  $form_state['values']['mothermayi_format'] = $hint['format'];
-  $form_state['values']['mothermayi_secret_hint'] = $hint['value'];
-
   // Don't want to save this.
   unset ($form_state['values']['_mothermayi_test']);
 }
@@ -203,10 +204,13 @@ function mothermayi_form_user_register_form_alter(&$form, &$form_state, $form_id
       '#description' => t('Enter the secret word.'),
       '#weight' => 1,
     );
-    $hint = variable_get('mothermayi_secret_hint', '');
-    if ($hint != '') {
-      $filter = variable_get('mothermayi_filter', filter_default_format());
-      $hint = check_markup($hint, $filter, FALSE);
+    $defaults = array(
+      'value' => '',
+      'format' => filter_default_format(),
+    );
+    $hint = variable_get('mothermayi_secret_hint', $defaults);
+    if ($hint['value'] != '') {
+      $hint = check_markup($hint['value'], $hint['format'], FALSE);
       $fs['hint'] = array(
         '#type' => 'item',
         '#description' => $hint,
@@ -217,13 +221,11 @@ function mothermayi_form_user_register_form_alter(&$form, &$form_state, $form_id
   $ef = variable_get('mothermayi_empty', FALSE);
   if ($ef) {
     // Add a "must be empty" field.
-    $filter = variable_get('mothermayi_filter', filter_default_format());
     $desc = variable_get('mothermayi_empty_description', t('Leave blank'));
-    $desc = check_markup($desc, $filter, FALSE);
     $fs['mothermayi_mty'] = array(
       '#type' => 'textfield',
       '#size' => 20,
-      '#description' => $desc,
+      '#description' => filter_xss_admin($desc),
       '#default' => '',
       '#weight' => 1,
     );
@@ -337,4 +339,34 @@ function mothermayi_permission() {
       'restrict access' => TRUE,
     )
   );
+}
+
+/**
+ * Implements hook_variable_info().
+ */
+function mothermayi_variable_info($options) {
+  $variable['mothermayi_secret_word'] = array(
+    'title' => t('Secret word', array(), $options),
+    'type' => 'string',
+  );
+  $variable['mothermayi_use_preg'] = array(
+    'title' => t('Secret word as regular expression', array(), $options),
+    'type' => 'boolean',
+    'localize' => TRUE,
+  );
+  $variable['mothermayi_secret_hint'] = array(
+    'title' => t('Secret word hint', array(), $options),
+    'type' => 'text_format',
+  );
+  $variable['mothermayi_empty_description'] = array(
+    'title' => t('Emptyfield description', array(), $options),
+    'type' => 'text',
+  );
+
+  foreach($variable as $key => $value) {
+    $variable[$key]['group'] = 'user_settings';
+    $variable[$key]['access'] = MOTHERMAYI_ADMINISTER_PASSWORD;
+  }
+
+  return $variable;
 }

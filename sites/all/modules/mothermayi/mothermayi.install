@@ -18,7 +18,33 @@ function mothermayi_install() {
  * Remove any variables.
  */
 function mothermayi_uninstall() {
-  foreach (array('secret_word', 'secret_hint', 'weight', 'filter') as $name) {
+  $variables = array(
+    'secret_word',
+    'use_preg',
+    'secret_hint',
+    'weight',
+    'empty',
+    'empty_description',
+  );
+
+  foreach ($variables as $name) {
     variable_del("mothermayi_$name");
+  }
+}
+
+/**
+ * Remove motherymayi_format variable and store it with mothermayi_hint.
+ */
+function mothermayi_update_7100() {
+  $format = variable_get('mothermayi_format');
+  $secret_hint = variable_get('mothermayi_secret_hint');
+
+  if (isset($format) && is_string($secret_hint)) {
+    $hint = array(
+      'value' => $secret_hint,
+      'format' => $format,
+    );
+    variable_set('mothermayi_secret_hint', $hint);
+    variable_del('mothermayi_format');
   }
 }

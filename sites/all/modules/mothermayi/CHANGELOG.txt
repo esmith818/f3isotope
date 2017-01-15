@@ -1,3 +1,7 @@
+Mother May I 7.x-1.6, 2017-01-05
+--------------------------------------
+#2463521 by dwillcox,fau: Make hint and empty field description available for translation.
+
 Mother May I 7.x-1.5, 2014-04-01
 --------------------------------------
 #2226657 by dwillcox: Move hint wording up above entry box where it belongs.

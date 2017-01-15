@@ -4,9 +4,9 @@ package = Spam control
 configure = admin/config/people/mothermayi
 core = 7.x
 
-; Information added by Drupal.org packaging script on 2014-04-02
-version = "7.x-1.5"
+; Information added by Drupal.org packaging script on 2017-01-06
+version = "7.x-1.6"
 core = "7.x"
 project = "mothermayi"
-datestamp = "1396409347"
+datestamp = "1483676045"
 
