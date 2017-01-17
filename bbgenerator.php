@@ -28,6 +28,9 @@
 		margin: 8px 0;
 		padding: 6px 12px;
 		font-size: 16px;
+		padding: 12px 30px;
+		border-radius: 3px;
+		color: #5d5d5d;
 	}
 </style>
 </head>
