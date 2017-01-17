@@ -1,10 +1,11 @@
-<?php // Setup a form to retrieve custom information for generating a MadLibs back blast ?>
+<head>
+	<title>Back Blast Mad Libs</title>
+	<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Bitter" />
+	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
+</head>
 
-<title>Back Blast Mad Libs</title>
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Bitter" />
-<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
-
-<?php
+<?php // Setup a form to retrieve custom information for generating a MadLibs back blast
 function create_array($str) {
 	$array = explode(',', $str);
 	$array = array_map('trim', $array);
