@@ -1,8 +1,35 @@
 <head>
-	<title>Back Blast Mad Libs</title>
-	<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.0//EN" "http://www.wapforum.org/DTD/xhtml-mobile10.dtd">
-	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Bitter" />
-	<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
+<!DOCTYPE html>
+<title>Back Blast Mad Libs</title>
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Bitter" />
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
+<style>
+	body, label {
+		color:#5d5d5d;
+		font-family:'Droid Sans';
+	}
+	h1 {
+		color:#a80707;
+		font-family:'Bitter';
+		font-size:35px;"
+	}
+	input[type=submit] {
+		-webkit-appearance: none;
+		background-color: #FFF;
+		color: #5d5d5d;
+		border: solid 1px;
+		font-size: 16px;
+		border-radius: 3px;
+		padding: 12px 30px;
+		cursor: pointer;
+	}
+	input[type=text], textarea {
+		width: 90%;
+		margin: 8px 0;
+		padding: 6px 12px;
+		font-size: 16px;
+	}
+</style>
 </head>
 
 <?php // Setup a form to retrieve custom information for generating a MadLibs back blast
@@ -56,8 +83,8 @@ if (isset($_POST['action'])) {
 	$backblast .= "\n\n(insert your weinke here)";
 }
 ?>
-<body style="color:#5d5d5d; font-family:'Droid Sans';">
-<h1 style="color:#a80707; font-family:'Bitter'; font-size:35px;">Back Blast Intro Generator</h1>
+<body>
+<h1>Back Blast Intro Generator</h1>
 <p>Are you having a hard time coming up with something interesting to say in your back blast? Do you need a little humor to draw in the reader? With a little
 	information, this form will generate the perfect introduction to your back blast. Fill in the following fields and submit your answers to generate a custom opening
 	paragraph. If you don't like the first attempt, click the Submit button again for a revised option. When you like the result, copy and paste into your back
@@ -65,11 +92,11 @@ if (isset($_POST['action'])) {
 	you will say!</p>
 <br /><strong>Provide a few details about your workout:</strong>
 <hr />
-<form action="creativebb.php" method="post">
-  <p>Enter name of the workout:<br /><input type="text" name="ao" value="<?php print $ao; ?>" size="50%" />
-  <p>Enter names of all pax at workout separated with commas:<br /><input type="text" name="pax" value="<?php print $pax; ?>" size="80%" />
-  <p>Enter names of a few exercises at workout separated with commas:<br /><input type="text" name="exercises" value="<?php print $exercises; ?>" size="80%" />
-  <p>Enter a few locations (e.g. parking lot; rock pile) separated with commas:<br /><input type="text" name="locations" value="<?php print $locations; ?>" size="80%" />
+<form action="bbgenerator.php" method="post">
+  <p><label for="ao">Enter name of the workout:<br /><input type="text" name="ao" value="<?php print $ao; ?>" />
+  <p><label for="pax">Enter names of all pax at workout separated with commas:<br /><input type="text" name="pax" value="<?php print $pax; ?>" />
+  <p><label for="exercises">Enter names of a few exercises at workout separated with commas:<br /><input type="text" name="exercises" value="<?php print $exercises; ?>" />
+  <p><label for="locations">Enter a few locations (e.g. parking lot; rock pile) separated with commas:<br /><input type="text" name="locations" value="<?php print $locations; ?>" />
   <p><input type="submit" value="Submit" />
   <input type="hidden" name="action" value="backblast" />
 </form>
