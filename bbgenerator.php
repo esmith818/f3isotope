@@ -1,6 +1,8 @@
 <?php // Setup a form to retrieve custom information for generating a MadLibs back blast ?>
 
 <title>Back Blast Mad Libs</title>
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Bitter" />
+<link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Droid+Sans" />
 
 <?php
 function create_array($str) {
@@ -53,12 +55,12 @@ if (isset($_POST['action'])) {
 	$backblast .= "\n\n(insert your weinke here)";
 }
 ?>
-
-<h1 class="title" id="page-title">Back Blast Intro Generator</h1>
-<p>Are you having a hard time coming up with something interesting to say in your back blast? Do you need a little humor to draw in the reader? With a little 
-	information, this form will generate the perfect introduction to your back blast. Fill in the following fields and submit your answers to generate a custom opening 
-	paragraph. If you don't like the first attempt, click the Submit button again for a revised option. When you like the result, copy and paste into your back 
-	blast and then add the actual (boring) details after. With a witty opening, you'll find the pax waiting impatiently after each of your Qs to see what 
+<body style="color:#5d5d5d; font-family:'Droid Sans';">
+<h1 style="color:#a80707; font-family:'Bitter'; font-size:35px;">Back Blast Intro Generator</h1>
+<p>Are you having a hard time coming up with something interesting to say in your back blast? Do you need a little humor to draw in the reader? With a little
+	information, this form will generate the perfect introduction to your back blast. Fill in the following fields and submit your answers to generate a custom opening
+	paragraph. If you don't like the first attempt, click the Submit button again for a revised option. When you like the result, copy and paste into your back
+	blast and then add the actual (boring) details after. With a witty opening, you'll find the pax waiting impatiently after each of your Qs to see what
 	you will say!</p>
 <br /><strong>Provide a few details about your workout:</strong>
 <hr />
@@ -74,4 +76,4 @@ if (isset($_POST['action'])) {
 <br />
 <strong>Result:</strong><br />
 <textarea rows="16" cols="80"><?php echo $backblast; ?></textarea>
-
+</body>
