@@ -8,6 +8,8 @@ sites/*/private
 # Ignore backup files and dot files custom to bluehost
 .htaccess
 .htaccess.*
+php.ini
+php.ini.*
 .php.ini.*
 php.ini.bak.*
 .editorconfig
