@@ -1,0 +1,10 @@
+name = IP Ranges
+description = Create black- and whitelists of banned IP-addresses.
+core = 7.x
+
+; Information added by drupal.org packaging script on 2012-02-14
+version = "7.x-1.2"
+core = "7.x"
+project = "ip_ranges"
+datestamp = "1329250538"
+

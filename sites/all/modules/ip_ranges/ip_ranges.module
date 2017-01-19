@@ -1,0 +1,168 @@
+<?php
+
+/**
+ * Implements hook_menu().
+ */
+function ip_ranges_menu() {
+  $items = array();
+  $items['admin/config/people/ip-ranges'] = array(
+    'title' => 'IP range bans',
+    'description' => 'Manage banned IP addresse ranges.',
+    'page callback' => 'ip_ranges_page',
+    'access arguments' => array('ban IP address ranges'),
+    'file' => 'ip_ranges.admin.inc',
+    'weight' => 10,
+  );
+  $items['admin/config/people/ip-ranges/delete/%'] = array(
+    'title' => 'Delete IP range',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('ip_ranges_delete', 5),
+    'access arguments' => array('ban IP address ranges'),
+    'file' => 'ip_ranges.admin.inc',
+  $items['admin/config/people/ip-ranges/whitelist_own'] = array(
+    'page callback' => 'ip_ranges_whitelist_own_address',
+    'access arguments' => array('ban IP address ranges'),
+  ), 
+ );
+
+  return $items;
+}
+
+/**
+ * Implements hook_permission().
+ */
+function ip_ranges_permission() {
+  return array(
+    'ban IP address ranges' => array(
+      'title' => t('Ban IP address ranges'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_boot().
+ *
+ * Checks users ip first against the whitelist, then the blacklist if needed.
+ *
+ * @see ip_ranges_get_ip_list()
+ * @see ip_ranges_check_ip()
+ * @see ip_ranges_deny_access()
+ */
+function ip_ranges_boot() {
+  $whitelist = ip_ranges_get_ip_list('whitelist');
+  $current_ip = ip_address();
+  foreach ($whitelist as $ip) {
+    if (ip_ranges_check_ip($ip->ip, $current_ip)) {
+      $whitelisted = 1;
+      break;
+    }
+  }
+
+  if (!isset($whitelisted)) {
+    $blacklist = ip_ranges_get_ip_list('blacklist');
+    foreach ($blacklist as $ip) {
+      if (ip_ranges_check_ip($ip->ip, $current_ip)) {
+        ip_ranges_deny_access();
+      }
+    }
+  }
+}
+
+
+/**
+ * Handles denied users.
+ *
+ * Prints a message and exits if access is denied.
+ */
+function ip_ranges_deny_access() {
+  header($_SERVER['SERVER_PROTOCOL'] . ' 403 Forbidden');
+  print 'Sorry, ' . check_plain(ip_address()) . ' has been banned.';
+  exit();
+}
+
+/**
+ * Checks users ip first against the whitelist, then the blacklist if needed.
+ *
+ * @param $ip
+ *   Black- or whitelisted ip-address.
+ * @param $current_ip
+ *   Ip to be checked against the list, usually users current ip-address.
+ *
+ * @return
+ *   TRUE if the ip is on the list, FALSE if it is not.
+ *
+ * @see ip_ranges_check_range()
+ */
+function ip_ranges_check_ip($ip, $current_ip) {
+  $type = strpos($ip, '-') ? 'range' : 'single';
+  return ($type == 'single') ? $ip == $current_ip : ip_ranges_check_range($ip, $current_ip);
+}
+
+/**
+ * Checks if the given ip-address matches the given range.
+ *
+ * @param $ip
+ *   Black- or whitelisted ip-address range.
+ * @param $current_ip
+ *   Ip to be checked against the list, usually users current ip-address.
+ *
+ * @return
+ *   TRUE if the ip is on the list, FALSE if it is not.
+ */
+function ip_ranges_check_range($ip, $current_ip) {
+  $ip = explode('-', $ip);
+  list($lower, $upper) = $ip;
+  $lower_dec = (float) sprintf("%u", ip2long($lower));
+  $upper_dec = (float) sprintf("%u", ip2long($upper));
+  $ip_dec = (float) sprintf("%u", ip2long($current_ip));
+  return (($ip_dec >= $lower_dec) && ($ip_dec <= $upper_dec));
+}
+
+/**
+ * Creates/updates an entry to the ban database.
+ *
+ * @param $ip
+ *   IP-address or range to bw written to the database.
+ * @param $type
+ *   Type of the list(blacklist, whitelist).
+ * @param $bid
+ *   (optional) id of the current ban, used when existing record is updated.
+ */
+function ip_ranges_write_record($ip, $type, $bid = NULL) {
+  db_merge('ip_ranges')
+    ->key(array('bid' => $bid))
+    ->fields(array(
+      'bid' => $bid,
+      'ip' => $ip,
+      'type' => $type,
+    ))
+    ->execute();
+}
+
+/**
+ * Retrieves list of banned ip from the database.
+ *
+ * @param $type
+ *   (optional) Retrieve only the ip's of given list type(blacklist, whitelist).
+ *
+ * @return
+ *   An array of black-/whitelisted IP-addresses.
+ */
+
+function ip_ranges_get_ip_list($type = '') {
+  $query = db_select('ip_ranges', 'list');
+  if ($type) {
+    $query->condition('list.type', $type, '=')
+      ->fields('list', array('ip'));
+  }
+  else {
+    $query->fields('list');
+  }
+  return $query->execute()->fetchAll();
+}
+
+function ip_ranges_whitelist_own_address(){
+  ip_ranges_write_record(ip_address(), 'whitelist');
+  drupal_set_message('Your own IP-address ('.ip_address().') has been whitelisted.');
+  drupal_goto('admin/config/people/ip-ranges');
+}

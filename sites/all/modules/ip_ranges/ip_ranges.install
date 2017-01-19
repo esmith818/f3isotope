@@ -1,0 +1,39 @@
+<?php
+/**
+ * @file
+ * Install functions for the ip_ranges module.
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function ip_ranges_schema() {
+  $schema['ip_ranges'] = array(
+    'fields' => array(
+      'bid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'ip' => array(
+        'type' => 'varchar',
+        'length' => 31,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+      'type' => array(
+        'type' => 'varchar',
+        'length' => 9,
+        'not null' => TRUE,
+        'default' => '',
+      ),
+    ),
+    'primary key' => array('bid'),
+    'indexes' => array(
+      'bid' => array('bid'),
+      'type' => array('type'),
+    ),
+  );
+
+  return $schema;
+}
