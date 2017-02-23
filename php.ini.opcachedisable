@@ -1875,4 +1875,5 @@ extension=uploadprogress.so
 zend_extension=/usr/php/56/usr/lib64/php/modules/ioncube_loader_lin.so
 zend_extension=/usr/php/56/usr/lib64/php/modules/ixed.lin
 zend_extension=/usr/php/56/usr/lib64/php/modules/ZendGuardLoader.so
-;zend_extension=/usr/php/56/usr/lib64/php/modules/opcache.so
+zend_extension=/usr/php/56/usr/lib64/php/modules/opcache.so
+

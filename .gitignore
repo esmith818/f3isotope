@@ -7,3 +7,7 @@ sites/*/private
 
 #Ignore files that have different settings on webhost versus local
 .htaccess
+error_log
+php.ini
+.htaccess.bak.*
+.php.ini.*
