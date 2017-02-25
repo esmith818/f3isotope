@@ -174,4 +174,18 @@ function skeletontheme_date_nav_title($params) {
 		return $title;
 	}
 }
+
+/**
+ * Output customized node preview on node edit and add forms.
+ */
+function skeletontheme_node_preview($variables) {
+  $node = $variables['node'];
+  $elements = node_view($node, 'full');
+  $full = drupal_render($elements);
+  $output = '<div class="preview">';
+  $output .= '<h3 class="post-preview" >' . t('Preview of your posting') . '</h3>';
+  $output .= $full;
+  $output .= "</div>\n";
+  return $output;
+}
 //EOF:Javascript
