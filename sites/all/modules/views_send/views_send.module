@@ -756,11 +756,11 @@ function views_send_queue_mail($params, $selected_rows, $view) {
     if (property_exists($view->result[$row_id], 'nid')) {
       $data['node'] = node_load($view->result[$row_id]->nid);
     }
-    $subject = token_replace($subject, $data);
-    $body = token_replace($body, $data);
+    $subject_expanded = token_replace($subject_expanded, $data);
+    $body_expanded = token_replace($body_expanded, $data);
 
     if (!VIEWS_SEND_MIMEMAIL || (variable_get('mimemail_format', 'plain_text') == 'plain_text')) {
-      $body = drupal_html_to_text($body);
+      $body_expanded = drupal_html_to_text($body_expanded);
     }
 
     $message = $message_base + array(
@@ -1142,8 +1142,11 @@ function views_send_deliver($message) {
     'subject' => $message->subject,
     'body' => $message->body,
     'headers' => $headers,
-    'params' => $message->params, // Because of Swifth Mailer issue 2841663
   );
+  // Because of Swifth Mailer issue 2841663
+  if (module_exists('swiftmailer')) {
+    $mail['params'] = $message->params;
+  }
 
   // Mime encode the subject before passing to the mail function 
   // to work around a bug in Drupal's mime_header_encode.
