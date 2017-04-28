@@ -796,7 +796,7 @@ table.calendar-legend tr.even .stripe {
 
 .view .date-nav-wrapper .date-prev a {
   margin-left: 10px;
-  font-weight: bold;
+  font-weight: normal;
 }
 
 .view .date-nav-wrapper .date-heading {
@@ -829,7 +829,7 @@ table.calendar-legend tr.even .stripe {
 
 .view .date-nav-wrapper .date-next a {
   margin-right: 10px;
-  font-weight: bold;
+  font-weight: normal;
 }
 
 .attachment .calendar-calendar {

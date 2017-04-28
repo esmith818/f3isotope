@@ -1,0 +1,62 @@
+name = Parallax Zymphonies Theme
+description =  Parallax Zymphonies Theme<br/>Developed & Designed by <a href="http://www.zymphonies.com">Zymphonies</a><br/>Contact us for Drupal Design & Development <a href="mailto:info@zymphonies.com">info@zymphonies.com</a> 
+core = 7.x
+
+engine = phptemplate
+stylesheets[all][] = css/jquery-ui.min.css
+stylesheets[all][] = css/font-awesome.css
+stylesheets[all][] = css/style.css
+stylesheets[all][] = css/media.css
+scripts[] = js/jquery-ui.min.js
+scripts[] = js/custom.js
+
+regions[home_banner_text]     = Home page banner text
+
+regions[home_top_block_01] = Home page top first block
+regions[home_top_block_02] = Home page top second block
+regions[home_top_block_03] = Home page top third block
+
+regions[home_block_01] = Home page first block
+regions[home_block_02] = Home page second block
+regions[home_block_03] = Home page third block
+regions[home_block_04] = Home page forth block
+
+regions[home_bottom_block_01] = Home page bottom first block
+regions[home_bottom_block_02] = Home page bottom second block
+regions[home_bottom_block_03] = Home page bottom third block
+
+regions[sidebar_first]   = First sidebar
+regions[sidebar_second]  = Second sidebar
+regions[content]         = Content
+
+regions[footer_first]    = First bottom widget
+regions[footer_second]   = Second bottom widget
+regions[footer_third]    = Third bottom widget
+regions[footer_forth]    = Forth bottom widget
+
+features[] = logo
+features[] = name
+features[] = slogan
+features[] = node_user_picture
+features[] = comment_user_picture
+features[] = comment_user_verification
+features[] = favicon
+features[] = main_menu
+features[] = secondary_menu
+
+settings[breadcrumbs]  = 1
+settings[social_links]  = 1
+settings[twitter_url] = "https://twitter.com/zymphonies"
+settings[facebook_url] = "https://www.facebook.com/zymphonies"
+settings[gplus_profile_url] = "https://plus.google.com/+ZymphoniesTechnologies"
+settings[linkedin_profile_url] = "http://www.linkedin.com/company/zymphonies"
+settings[pinterest_profile_url] = "https://www.pinterest.com/zymphonies/"
+settings[youtube_profile_url] = "http://www.youtube.com"
+
+
+; Information added by Drupal.org packaging script on 2015-11-06
+version = "7.x-1.0"
+core = "7.x"
+project = "parallax_zymphonies_theme"
+datestamp = "1446838440"
+
