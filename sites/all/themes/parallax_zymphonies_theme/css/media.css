@@ -1,0 +1,224 @@
+
+@media screen and (max-width: 960px) {
+
+  body{
+    background: #fff;
+    margin: 0;
+  }
+
+  .menu-wrap{ text-align: center; }
+
+  #main-menu,
+  #main-menu ul{
+    width: 100%;
+    text-align: center;
+  }
+
+  #main-menu li{
+    float: none;
+  }
+
+  .menu-wrap{
+    position: static;
+    border: 0;
+  }
+
+  .region-home-banner-text .block {
+    margin-top: 8%;
+  }
+
+  .region-home-banner-text h1{
+    font-size: 24px;
+  }
+
+  .halfwidth{
+    width: 100%;
+  }
+
+  .homebanner{
+    height: auto;
+  }
+
+  #footer-area{
+    padding-bottom: 0;
+  }
+
+  #home-bottom-block,
+  #home-top-block{
+    padding: 0 15px;
+    overflow: hidden;
+  }
+
+  .parallax-block .region{
+    padding: 30px 15px;
+  }
+
+  #container,
+  .menu-wrap{
+    padding: 15px;
+  }
+  
+  body aside,
+  body #content,
+  #top-area .column,
+  #footer-area .column{
+    float: none !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    clear: both;
+  }
+
+  #footer,
+  #page-wrap{
+    padding: 0 15px;
+  }
+
+  .social-icons, 
+  .footer_credit .copyright{
+    width: 100%;
+    margin: 10px 0;
+    text-align: center;
+  }
+
+  .nivo-caption {
+  	display: none !important;
+  }
+
+  .theme-default .nivo-controlNav {
+  	bottom: 10px;
+  }
+
+  .block-webform .webform-component-textfield{
+    width: 100%;
+  }
+
+  div.content-sidebar-wrap {
+    width: 100% !important;
+  }
+
+}
+
+@media screen and (max-width: 640px) {
+
+  body{
+    margin-top: 46px;
+  }
+
+  h1#site-title a {
+    color: white;
+  }
+
+  .region-banner-text h2 {
+    font-size: 22px;
+  }
+
+  .region-banner-text p {
+    font-size: 15px;
+  }
+
+  .menu-wrap{  
+    background: #333;
+    overflow: hidden;
+  }
+
+  #main-menu ul {
+    display: none;
+  }
+
+  #main-menu li ul {
+    position: static;
+    border: 0;
+  }
+
+  #main-menu li ul ul {
+    margin: 0 !important;
+    border: 0;
+  }
+
+  #main-menu ul,
+  #main-menu li {
+    float: none;
+    width: 100%;
+  }
+
+  #main-menu {
+    border: 0;
+    float: none;  
+    background: #000;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 99;
+    right: 0;
+  }
+
+  #main-menu a {
+    width: 100%;
+    padding: 15px 0;
+    color: #fff;
+    border-radius: 0;
+    margin: 0;
+    text-align: center;
+    border-bottom: 1px solid #181818;
+  }
+
+  #main-menu li li a {
+    text-align: center;
+    font-size: 13px;
+    background: #0D0D0D;
+    border-bottom: 1px solid #1B1B1B;
+    color: #989898;
+    padding: 15px 0;
+  }
+
+  #main-menu li a.active{
+    border-bottom: 1px solid #181818; 
+  }
+
+  #main-menu li:hover > ul,
+  #main-menu li li:hover > ul,
+  #main-menu li li li:hover > ul {
+    display: none;
+  }
+
+  .drop-down-toggle {
+    display: block;
+  }
+
+  #main-menu li li.expanded > a{
+    background-image: none;
+  }
+
+  #main-menu .nav-toggle {
+    display: block;
+    font-size: 15px;
+    font-weight: normal;
+    background: #18222B;
+    color: white;
+    margin: 0;
+    letter-spacing: 1px;
+    text-align: center;
+    background: url(../images/mobile-menu.png) right 14px #18222B no-repeat;
+    padding: 15px;
+    width: 50px;
+    font-size: 0;
+    height: 45px;  
+  }
+
+  #main-menu ul.menu li {
+    margin: 0;
+    width: 100%;
+  }
+
+  #header{
+  	margin-top: 45px;
+  	padding: 5px 10px;
+  }
+
+  #top-area .column img,
+  #footer-area .column img{
+  	width: 100%;
+  }
+
+}
