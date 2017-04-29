@@ -2026,7 +2026,7 @@ div.warning {
   width: 33%;
 }
 
-h1.page-title {
+body.front h1.page-title {
   display: none;
 }
 

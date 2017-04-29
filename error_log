@@ -175,3 +175,4 @@ These options need to match
 [23-Feb-2017 15:41:51] PHP Warning:  PHP Startup: Unable to load dynamic library '/usr/php/56/usr/lib64/php/modules/uploadprogress.so' - /usr/php/56/usr/lib64/php/modules/uploadprogress.so: undefined symbol: zend_ini_string_ex in Unknown on line 0
 [23-Feb-2017 17:41:53] PHP Warning:  Unexpected character in input:  '\' (ASCII=92) state=1 in /home2/smithypc/public_html/sites/all/modules/mailchimp/mailchimp.module on line 553
 [23-Feb-2017 17:41:53] PHP Parse error:  syntax error, unexpected T_STRING in /home2/smithypc/public_html/sites/all/modules/mailchimp/mailchimp.module on line 553
+[22-Mar-2017 08:35:12 America/New_York] PHP Fatal error:  Maximum execution time of 30 seconds exceeded in /home2/smithypc/public_html/includes/database/database.inc on line 695
