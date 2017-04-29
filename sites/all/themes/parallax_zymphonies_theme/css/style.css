@@ -612,10 +612,13 @@ a.views-more-link {
   margin-top: 6px;
 }
 
+<<<<<<< HEAD
 .form-item-comment-body-und-0-value textarea.form-textarea {
   font-size: 14pt;
 }
 
+=======
+>>>>>>> 84cbea09fb60aa5e752100d4516f2888d5d63090
 div.recent-comment {
   padding-bottom: 16px !important;
 }
@@ -2030,7 +2033,11 @@ div.warning {
   width: 33%;
 }
 
+<<<<<<< HEAD
 body.front h1.page-title {
+=======
+h1.page-title {
+>>>>>>> 84cbea09fb60aa5e752100d4516f2888d5d63090
   display: none;
 }
 
