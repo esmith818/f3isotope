@@ -99,7 +99,7 @@
 
 }
 
-@media screen and (max-width: 640px) {
+@media screen and (max-width: 640px) and (max-device-width: 960px) {
 
   body{
     margin-top: 46px;
