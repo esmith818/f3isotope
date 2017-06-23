@@ -51,7 +51,7 @@ function datereminder_mail($key, &$message, $params) {
     'global' => NULL,
   );
 
-  $options = array();
+  $options = array('clear' => TRUE);
 
   $v = token_replace(_datereminder_email_subject(), $objects, $options);
   $message['subject'] = $v;

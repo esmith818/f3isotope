@@ -7,9 +7,9 @@ configure = admin/config/media/socialmedia
 files[] = socialmedia.module
 files[] = socialmedia.admin.inc
 files[] = socialmedia.widgets_elements.inc
-; Information added by Drupal.org packaging script on 2015-03-13
-version = "7.x-1.0-beta15"
+; Information added by Drupal.org packaging script on 2017-05-18
+version = "7.x-1.0-beta16"
 core = "7.x"
 project = "socialmedia"
-datestamp = "1426261751"
+datestamp = "1495138691"
 

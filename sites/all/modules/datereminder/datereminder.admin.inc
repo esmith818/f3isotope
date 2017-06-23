@@ -158,6 +158,13 @@ function datereminder_settings_form() {
                 array('%block' => t('Reminder request'))),
     ),
   );
+  $form['datereminder_fieldset_collapsed'] = array(
+    '#type' => 'checkbox',
+    '#description' =>
+      t('Fieldset in node should initially be collapsed'),
+    '#default_value' => variable_get('datereminder_fieldset_collapsed', 1),
+    '#title' => t('Field initially collapsed'),
+  );
   $form['datereminder_anonymous_link'] = array(
       '#type' => 'checkbox',
       '#description' =>
