@@ -2351,72 +2351,6 @@ div.profile .field-name-field-sub-region {
   border-radius: 4px;
 }
 
-.node-back-blast,
-.node-preblast {
-  background-color: rgba(255, 255, 255, 0.5);
-  -khtml-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  padding: 18px;
-}
-
-.node-back-blast .field-name-body,
-.node-preblast .field-name-body {
-  padding-top: 12px;
-  border-top: 3px solid darkred;
-  border-top-style: double;
-}
-
-div.view-preblast-recent,
-div.view-backblast-recent {
-  background-color: rgba(255, 255, 255, 0.5);
-  -khtml-border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  border-radius: 4px;
-  padding: 18px;
-}
-
-div.view-preblast-recent .views-row,
-div.view-backblast-recent .views-row {
-  padding: 12px 0;
-  border-top: 1px solid darkgray;
-}
-
-div.view-preblast-recent .views-row:nth-child(1),
-div.view-backblast-recent .views-row:nth-child(1) {
-  padding-bottom: 12px;
-  border-top: none;
-}
-
-div.view-preblast-recent .views-row:last-child,
-div.view-backblast-recent .views-row:last-child {
-  padding-top: 12px;
-  border-top: 1px solid darkgray;
-}
-
-.preblast-recent-title a,
-.bb-recent-title a {
-  font-size: 18px;
-  font-weight: bold;
-}
-
-.preblast-recent-subregion a {
-  padding: 0 6px;
-  border-left: 1px solid darkgray;
-}
-
-.preblast-recent-subregion a:first-child {
-  padding-left: 0;
-  border-left: 0;
-}
-
-span.views-label-field-event-location {
-  float: left;
-  margin-right: 3px;
-}
-
 .field-type-taxonomy-term-reference .field-label-inline div.field-items {
   float: none !important;
 }
@@ -2445,33 +2379,110 @@ span.views-label-field-event-location {
    background: #a8a8a8;
 }
 
+.node-back-blast,
+.node-preblast,
+.node-jerky {
+  background-color: rgba(255, 255, 255, 0.5);
+  -khtml-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  padding: 18px;
+}
+
+.node-back-blast .field-name-body,
+.node-preblast .field-name-body,
+.node-jerky .field-name-field-jerky-content {
+  padding-top: 12px;
+  border-top: 3px solid darkred;
+  border-top-style: double;
+}
+
+div.view-preblast-recent,
+div.view-backblast-recent,
+div.view-jerky-recent {
+  background-color: rgba(255, 255, 255, 0.5);
+  -khtml-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  border-radius: 4px;
+  padding: 18px;
+}
+
+div.view-preblast-recent .views-row,
+div.view-backblast-recent .views-row,
+div.view-jerky-recent .views-row {
+  padding: 12px 0;
+  border-top: 1px solid darkgray;
+}
+
+div.view-preblast-recent .views-row:nth-child(1),
+div.view-backblast-recent .views-row:nth-child(1),
+div.view-jerky-recent .views-row:nth-child(1) {
+  padding-bottom: 12px;
+  border-top: none;
+}
+
+div.view-preblast-recent .views-row:last-child,
+div.view-backblast-recent .views-row:last-child,
+div.view-jerky-recent .views-row:last-child {
+  padding-top: 12px;
+  border-top: 1px solid darkgray;
+}
+
+.preblast-recent-title a,
+.bb-recent-title a {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.preblast-recent-subregion a {
+  padding: 0 6px;
+  border-left: 1px solid darkgray;
+}
+
+.preblast-recent-subregion a:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+span.views-label-field-event-location {
+  float: left;
+  margin-right: 3px;
+}
+
 .field-name-field-ao .field-label,
-.field-name-field-subregion .field-label {
+.field-name-field-subregion .field-label,
+.field-name-field-flavors .field-label {
   display: none;
 }
 
 .field-name-field-subregion .field-item,
-.field-name-field-ao .field-item {
+.field-name-field-ao .field-item,
+.field-name-field-flavors .field-item {
    float: left;
-   background: darkred;
+   background: darkred !important;
    padding: 1px 10px;
    margin: 2px;
    vertical-align: middle;
 }
 
 .field-name-field-subregion .field-item:hover,
-.field-name-field-ao .field-item:hover {
+.field-name-field-ao .field-item:hover,
+.field-name-field-flavors .field-item:hover {
    background: #720000;
    color: #ccc;
 }
 
 .field-name-field-subregion .field-item:active,
-.field-name-field-ao .field-item:active {
+.field-name-field-ao .field-item:active,
+.field-name-field-flavors .field-item:active {
    background: #a8a8a8;
 }
 
 .field-name-field-pax,
-.node-preblast .field-name-field-q-tax{
+.node-preblast .field-name-field-q-tax,
+.node-jerky .field-name-field-flavors {
     margin-bottom: 20px;
 }
 
