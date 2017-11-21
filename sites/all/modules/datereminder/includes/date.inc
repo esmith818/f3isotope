@@ -115,10 +115,15 @@ function _datereminder_get_next_occurance($datefield, $lead = 0) {
  *   DateTime object for next occurance after $dt.
  */
 function _datereminder_get_occurance_after_date($df, $dt) {
+  $lang = key($df);
 
-  if (isset($df[LANGUAGE_NONE])) {
+  if (isset($df[$lang])) {
     // Get map of type to format string.
-    $dates = $df[LANGUAGE_NONE];
+    $dates = $df[$lang];
+    if (!isset($dates[0])) {
+      // Not sure why there would be *no* dates in the field, but...
+      return NULL;
+    }
     $ftmap = _datereminder_supported_date_field_types();
     $fmtstring = $ftmap[$dates[0]['date_type']];
     if (!$fmtstring) {
@@ -144,7 +149,7 @@ function _datereminder_get_occurance_after_date($df, $dt) {
 
       if (strcmp($etime, $datestr) > 0) {
         // This is the one we want. Turn back into DateTime.
-        return _datereminder_date_field_value_to_datetime($df, $etime);
+        return _datereminder_date_field_value_to_datetime($df, $etime, $lang);
       }
     }
   }
@@ -205,9 +210,9 @@ function _datereminder_date_format_internal($dt) {
  * @return DateTime
  *   $val represented as DateTime
  */
-function _datereminder_date_field_value_to_datetime($datefield, $dt) {
-  $tzname = $datefield[LANGUAGE_NONE][0]['timezone_db'];
-  $datetype = $datefield[LANGUAGE_NONE][0]['date_type'];
+function _datereminder_date_field_value_to_datetime($datefield, $dt, $lang) {
+  $tzname = $datefield[$lang][0]['timezone_db'];
+  $datetype = $datefield[$lang][0]['date_type'];
   if ($datetype == 'datestamp') {
     // For date stamp, we need to add the '@', but don't need timezone.
     return new DateTime("@$dt");

@@ -1,3 +1,12 @@
+Date Reminder 7.x-1.13 2017-11-18
+----------------------------------------
+#2885272 by Postovan Dumitru, dwillcox: Date field tranlation
+
+Date Reminder 7.x-1.12 2017-05-06
+----------------------------------------
+#2875958 by dwillcox: Add config option to control initial field set collapse
+#2684843 by shenzhuxi: token placeholder shouldn't be in email if the value is empty
+
 Date Reminder 7.x-1.11 2015-08-21
 ----------------------------------------
 #2431063 by dwillcox: Fix calculation of next reminder when date
