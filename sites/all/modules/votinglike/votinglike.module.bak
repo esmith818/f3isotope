@@ -1,0 +1,265 @@
+<?php
+// $Id: votinglike.module,v 1.28 2013/11/20 11:15:31 drumm Exp $
+
+/**
+ * @file
+ *   Custom code for the news page, planet Drupal and similar pages.
+ */
+ 
+/**
+ * Implements hook_menu().
+ */
+function votinglike_menu() {
+	$items = array();
+	$items['voting/like'] = array(
+		'title' => 'Voting action',
+		'page callback' => 'votinglike_action',
+		'access arguments' => array('access content'),
+		'type' => MENU_CALLBACK,
+		'file' =>'votinglike.inc',
+	);
+	$items['admin/config/search/votinglike'] = array(
+		'title' => 'Voting like configuration',
+		'page callback'    => 'drupal_get_form',
+		'page arguments'   => array('votinglike_settings_form'),
+		'access arguments' => array('administer site configuration'),
+		'file' =>'votinglike.inc',
+	);
+
+	return $items;
+}
+
+/**
+ * Implementation of hook_theme().
+ */
+function votinglike_theme($existing, $type, $theme, $path) {
+	return array(
+		'button_voting' => array(
+			'variables' => array('btn_type' =>'node', 'btn_label' =>t('Like'), 'btn_tip' =>t('I like this'), 'btn_value' =>''),
+		),
+	);
+}
+
+/**
+ * Implements hook_entity_view().
+ */
+function votinglike_entity_view($entity, $type, $view_mode, $langcode) {
+
+	if (!in_array($type, array('node', 'comment', 'user'))) {
+		return;
+	}
+
+	if ($type == 'user') {
+		$comment_node = node_load($entity->nid);
+		// Check if LikeBtn is enabled for comments to the current node type.
+		if (!variable_get('votinglike_user_enabled', TRUE)) {
+			return;
+		}
+		$entity_id = $entity->uid;
+	}
+	elseif ($type == 'comment') {
+		$comment_node = node_load($entity->nid);
+		// Check if Voting Like is enabled for comments to the current node type.
+		if (!in_array($comment_node->type, variable_get('votinglike_comments_nodetypes', array()), TRUE)) {
+			return;
+		}
+		$entity_id = $entity->cid;
+	}
+	else {
+		// Check if Voting Like is enabled for the current node type.
+		if (!in_array($entity->type, variable_get('votinglike_nodetypes', array()), TRUE)) {
+			return;
+		}
+		$entity_id = $entity->nid;
+	}
+	
+	$vars =array();
+	$vars['value_type']	=variable_get('votinglike_counter_type', 'number');
+	$vars['button_type']=variable_get('votinglike_button_type', 'youtube');
+	$vars['label_like']		=variable_get('votinglike_label_like', 'Like');
+	$vars['label_dislike']	=variable_get('votinglike_label_dislike', 'Dislike');
+	
+	if($vars['label_like'] !='') 	$vars['label_like'] =t($vars['label_like']);
+	if($vars['label_dislike'] !='') $vars['label_dislike'] =t($vars['label_dislike']);
+	
+	$dislike_show 	=variable_get('votinglike_dislike_show', TRUE);
+	$tips_show 		=variable_get('votinglike_tips_show', TRUE);
+	$entity->content['votinglike_display'] = array(
+		'#markup' => votinglike_output($type, $entity_id, $dislike_show, $vars, $tips_show),
+		'#weight' => variable_get('votinglike_weight', 0),
+	);
+
+}
+
+/**
+ *Returns HTML for a button.
+ */
+function theme_button_voting($variables){
+	$output ='';
+	$btn_label 	=$variables['btn_label'];
+	$btn_tip 	=$variables['btn_tip'];
+	$btn_value 	=$variables['btn_value'];
+	
+	if($btn_label !='') $output ='<span class="btn-label">' .$btn_label .'</span>';
+	$output ='<span class="voting-toggle" title="' .$btn_tip .'"><span class="btn-icon"> </span>' .$output .'</span>';
+	
+	if($btn_value !='') $output .='<span class="btnLike-count number-' .$btn_value .'">' .$btn_value .'</span>';
+	
+	return $output;
+}
+
+ 
+/**
+ *Returns HTML for a button.
+ */
+function votinglike_output($type ='node', $eid =0, $dislike_show = FALSE, $vars =array(), $tips_show =TRUE){
+	$votinglike_path =drupal_get_path('module', 'votinglike');
+	drupal_add_js($votinglike_path .'/votinglike.js');
+	drupal_add_css($votinglike_path .'/votinglike.css');
+	
+	global $user;
+	
+	if(!isset($vars['value_vote'])) 	$vars['value_vote'] =1;
+	if(!isset($vars['value_type'])) 	$vars['value_type']	='number';
+	if(!isset($vars['button_type'])) 	$vars['button_type']='light';
+	if(!isset($vars['label_like'])) 	$vars['label_like']	=t('Like');
+	if(!isset($vars['tips_like'])) 		$vars['tips_like']	=t('I like this');
+	if(!isset($vars['tips_unlike'])) 	$vars['tips_unlike']=t('Unlike');
+	if(!isset($vars['label_dislike'])) 	$vars['label_dislike']	=t('Dislike');
+	if(!isset($vars['tips_dislike'])) 	$vars['tips_dislike']	=t('I dislike this');
+	if(!isset($vars['tips_undislike'])) $vars['tips_undislike']	=t('Undislike');
+		
+	$value_vote =$vars['value_vote'];
+	$value_type =$vars['value_type'];
+	$tag_like 	='like';
+	$tag_dislike ='dislike';
+
+	$voted =votinglike_get_vote($type, $eid, $user ->uid);
+	$voted_tag =is_object($voted)? $voted ->tag: '';
+	
+	$class_like 	=($voted_tag ==$tag_like)? 	' voted': '';
+	$class_dislike 	=($voted_tag ==$tag_dislike)? ' voted': '';
+	$val_like 		=($voted_tag ==$tag_like)? 	(-$value_vote): $value_vote;
+	$val_dislike 	=($voted_tag ==$tag_dislike)? (-$value_vote): $value_vote;
+	
+	$like_value 	=votinglike_vote_number($type, $eid, $tag_like);
+	$dislike_value 	=votinglike_vote_number($type, $eid, $tag_dislike);
+	
+	$tip_like 	 =($tips_show)? (($voted_tag ==$tag_like)? $vars['tips_unlike']: $vars['tips_like']): '';
+	$tip_dislike =($tips_show)? (($voted_tag ==$tag_dislike)? $vars['tips_undislike']: $vars['tips_dislike']): '';
+	
+	$button_like 	=array('btn_type' =>$type, 'btn_label' =>$vars['label_like'], 'btn_tip' =>$tip_like, 'btn_value' =>$like_value);
+	$button_dislike =array('btn_type' =>$type, 'btn_label' =>$vars['label_dislike'], 'btn_tip' =>$tip_dislike, 'btn_value' =>$dislike_value);
+	
+	$attributes =array(
+		'data-url' 	=>url('voting/like'),
+		'data-type'	=>$type,
+		'data-eid' 	=>$eid,
+		'data-val' 	=>$value_vote,
+		'data-value_type' 	=>$value_type,
+		'data-dislike_show' =>$dislike_show,
+		'data-tips_show' 	=>$tips_show,
+		'data-button_type' 	=>$vars['button_type'],
+		'data-label_like' 	=>$vars['label_like'],
+		'data-label_dislike' =>$vars['label_dislike'],
+	);
+	$voting_attributes ='';
+	foreach($attributes as $key =>$value)
+		$voting_attributes .=' ' .$key .'="' .$value .'"';
+	
+	$output ='<span class="btnVoting btnLike' .$class_like .'" data-tag="' .$tag_like .'" vote-count="' .$like_value .'" vote-value="' .$val_like .'">' .theme('button_voting', $button_like) .'</span>';
+	if($dislike_show) $output .='<span class="btnVoting btnDislike' .$class_dislike .'" data-tag="' .$tag_dislike .'" vote-count="' .$dislike_value .'" vote-value="' .$val_dislike .'">' .theme('button_voting', $button_dislike) .'</span>';
+	
+	$output ='<span class="voting-wrapper btnLike-' .$vars['button_type'] .'" ' .$voting_attributes .'>' .$output .'</span>';
+	return $output;
+}
+
+
+/**
+ *Check is voted
+ */
+function votinglike_check_voted($type, $eid, $uid =NULL, $tag =NULL){
+	global $user;
+	if(!$uid) $uid =$user ->uid;
+	$iWhere =" WHERE v.uid ='$uid' AND v.type ='$type' AND v.eid ='$eid'";
+	if($tag) $iWhere .=" AND v.tag ='$tag'";
+	if($uid ==0) $iWhere .=" AND vote_source ='" .ip_address() ."'";
+	
+	$result =db_query("SELECT v.vid AS vid FROM votinglike v $iWhere");
+	$data =$result ->fetchObject();
+	
+	return isset($data ->vid);
+}
+
+/**
+ *Returns a record vote.
+ */
+function votinglike_get_vote($type, $eid, $uid =NULL, $tag =NULL){
+	global $user;
+	if(!$uid) $uid =$user ->uid;
+	$iWhere =" WHERE v.uid ='$uid' AND v.type ='$type' AND v.eid ='$eid'";
+	if($tag) $iWhere .=" AND v.tag ='$tag'";
+	if($uid ==0) $iWhere .=" AND vote_source ='" .ip_address() ."'";
+	
+	$result =db_query("SELECT * FROM votinglike v $iWhere");
+	$data =$result ->fetchObject();
+	
+	return $data;
+}
+
+/**
+ *Returns total voted.
+ */
+function votinglike_vote_number($type, $eid, $tag =NULL){
+	$iWhere =" WHERE v.type ='$type' AND v.eid ='$eid'";
+	if($tag) $iWhere .=" AND v.tag ='$tag'";
+	
+	$result =db_query("SELECT COUNT(v.vid) AS total FROM votinglike v $iWhere");
+	$data =$result ->fetchObject();
+	
+	return $data ->total;
+}
+
+/**
+ *Function insert a vote record
+ */
+function votinglike_vote($type, $eid, $uid, $tag, $value =1, $value_type ='number', $status =1){
+	$vote =(object) array(
+		'uid'  	=>$uid,
+		'type' 	=>check_plain($type),
+		'eid'  	=>$eid,
+		'tag'  	=>$tag,
+		'value'	=>$value,
+		'value_type' =>$value_type,
+		'status' 	=>$status,
+		'timestamp' =>time(),
+		'vote_source' =>ip_address(),
+	);
+	foreach (module_implements('votinglike_vote') as $module) {
+		$function = $module . '_votinglike_vote';
+		$function($vote);
+	}
+	drupal_write_record('votinglike', $vote);
+}
+
+/**
+ *Function remove a vote record
+ */
+function votinglike_unvote($type, $eid, $uid, $tag =NULL){
+	
+	$iWhere =" WHERE uid ='$uid' AND type ='$type' AND eid ='$eid'";
+	if($tag) $iWhere .=" AND tag ='$tag'";
+	if($uid ==0) $iWhere .=" AND vote_source ='" .ip_address() ."'";
+	
+	db_query("DELETE FROM votinglike $iWhere");
+	foreach (module_implements('votinglike_unvote') as $module) {
+		$function = $module . '_votinglike_unvote';
+		$function($type, $eid, $uid, $tag);
+	}
+}
+
+
+
+
+
+

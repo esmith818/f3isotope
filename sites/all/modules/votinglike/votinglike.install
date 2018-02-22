@@ -1,0 +1,58 @@
+<?php
+// $Id: votinglike.install,v 1.0 2013/11/20 11:32:01 thenicespider Exp $
+/**
+ * Install the module with a new database table
+ * @file
+*/
+
+/**
+ * Implementation of hook_schema().
+ */
+function votinglike_schema() {
+  $schema['votinglike'] = array(
+    'fields' => array(
+      'vid'  => array('type' => 'serial', 'unsigned' => TRUE, 'not null' => TRUE),
+      'uid'  => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'type' => array('type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => 'node'),
+      'eid'  => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'tag'  => array('type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => 'vote'),
+      'value' => array('type' => 'float', 'not null' => TRUE, 'default' => 0),
+      'value_type' => array('type' => 'varchar', 'length' => 64, 'not null' => TRUE, 'default' => 'percent'),
+      'status'  => array('type' => 'int', 'not null' => TRUE, 'default' => 1),
+      'timestamp' => array('type' => 'int', 'unsigned' => TRUE, 'not null' => TRUE, 'default' => 0),
+      'vote_source' => array('type' => 'varchar', 'length' => 255),
+    ),
+    'primary key' => array('vid'),
+  );
+  return $schema;
+}
+
+/**
+ * Implementation of hook_install().
+ */
+function votinglike_install() {
+	$types = node_type_get_types();
+	$options = array();
+	foreach ($types as $type) {
+		$options[$type->type] = $type->type;
+	}
+	variable_set('votinglike_nodetypes', $options);
+}
+
+/**
+ * Implementation of hook_uninstall().
+ */
+function votinglike_uninstall() {
+	variable_del('votinglike_nodetypes');
+	variable_del('votinglike_comments_nodetypes');
+	variable_del('votinglike_weight');
+	variable_del('votinglike_button_type');
+	variable_del('votinglike_counter_type');
+	variable_del('votinglike_user_enabled');
+	variable_del('votinglike_dislike_show');
+	variable_del('votinglike_tips_show');
+	variable_del('votinglike_label_like');
+	variable_del('votinglike_label_dislike');
+}
+
+
