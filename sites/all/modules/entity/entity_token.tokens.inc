@@ -317,8 +317,7 @@ function _entity_token_get_token($wrapper, $options) {
     case 'integer':
       return $wrapper->value();
     case 'decimal':
-      // was 2. changed to 6 to accommodate lat/long in email rule
-      return number_format($wrapper->value(), 6);
+      return number_format($wrapper->value(), 2);
     case 'date':
       return format_date($wrapper->value(), 'medium', '', NULL, $langcode);
     case 'duration':
