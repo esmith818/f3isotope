@@ -30,43 +30,43 @@ function parallax_zymphonies_theme_form_system_theme_settings_alter(&$form, &$fo
   $form['zymphonies_theme_settings']['top_social_link']['social_links'] = array(
     '#type' => 'checkbox',
     '#title' => t('Show social icons (Facebook, Twitter and RSS) in header'),
-    '#default_value' => theme_get_setting('social_links', 'parallax_zymphonies_theme'),
+    '#default_value' => theme_get_setting('social_links'),
     '#description'   => t("Check this option to show twitter, facebook, rss icons in header. Uncheck to hide."),
   );
   $form['zymphonies_theme_settings']['top_social_link']['twitter_profile_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Twitter URL'),
-    '#default_value' => theme_get_setting('twitter_profile_url', 'parallax_zymphonies_theme'),
+    '#default_value' => theme_get_setting('twitter_profile_url'),
     '#description' => t("Enter your Twitter profile URL."),
   );
   $form['zymphonies_theme_settings']['top_social_link']['facebook_profile_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Facebook URL'),
-    '#default_value' => theme_get_setting('facebook_profile_url', 'parallax_zymphonies_theme'),
+    '#default_value' => theme_get_setting('facebook_profile_url'),
     '#description' => t("Enter your Facebook profile URL."),
   );
   $form['zymphonies_theme_settings']['top_social_link']['gplus_profile_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Gplus URL'),
-    '#default_value' => theme_get_setting('gplus_profile_url', 'parallax_zymphonies_theme'),
+    '#default_value' => theme_get_setting('gplus_profile_url'),
     '#description' => t("Enter your Gplus profile URL."),
   );
   $form['zymphonies_theme_settings']['top_social_link']['linkedin_profile_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Linkedin URL'),
-    '#default_value' => theme_get_setting('linkedin_profile_url', 'parallax_zymphonies_theme'),
+    '#default_value' => theme_get_setting('linkedin_profile_url'),
     '#description' => t("Enter your Linkedin profile URL."),
   );
   $form['zymphonies_theme_settings']['top_social_link']['pinterest_profile_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Pinterest URL'),
-    '#default_value' => theme_get_setting('pinterest_profile_url', 'parallax_zymphonies_theme'),
+    '#default_value' => theme_get_setting('pinterest_profile_url'),
     '#description' => t("Enter your Linkedin Pinterest URL."),
   );
   $form['zymphonies_theme_settings']['top_social_link']['youtube_profile_url'] = array(
     '#type' => 'textfield',
     '#title' => t('Youtube URL'),
-    '#default_value' => theme_get_setting('youtube_profile_url', 'parallax_zymphonies_theme'),
+    '#default_value' => theme_get_setting('youtube_profile_url'),
     '#description' => t("Enter your Youtube profile URL."),
   );
 

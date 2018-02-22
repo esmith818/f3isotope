@@ -1,5 +1,5 @@
 name = Parallax Zymphonies Theme
-description =  Parallax Zymphonies Theme<br/>Developed & Designed by <a href="http://www.zymphonies.com">Zymphonies</a><br/>Contact us for Drupal Design & Development <a href="mailto:info@zymphonies.com">info@zymphonies.com</a> 
+description =  Designed & Developed by <a href=http://www.zymphonies.com>Zymphonies</a><br/>Contact us for any kind of Drupal services <a href=mailto:info@zymphonies.com>info@zymphonies.com</a>
 core = 7.x
 
 engine = phptemplate
@@ -34,6 +34,9 @@ regions[footer_second]   = Second bottom widget
 regions[footer_third]    = Third bottom widget
 regions[footer_forth]    = Forth bottom widget
 
+regions[page_top] 		 = Page top
+regions[page_bottom] 	 = Page bottom
+
 features[] = logo
 features[] = name
 features[] = slogan
@@ -44,10 +47,11 @@ features[] = favicon
 features[] = main_menu
 features[] = secondary_menu
 
+
 settings[breadcrumbs]  = 1
 settings[social_links]  = 1
-settings[twitter_url] = "https://twitter.com/zymphonies"
-settings[facebook_url] = "https://www.facebook.com/zymphonies"
+settings[twitter_profile_url] = "https://twitter.com/zymphonies"
+settings[facebook_profile_url] = "https://www.facebook.com/zymphonies"
 settings[gplus_profile_url] = "https://plus.google.com/+ZymphoniesTechnologies"
 settings[linkedin_profile_url] = "http://www.linkedin.com/company/zymphonies"
 settings[pinterest_profile_url] = "https://www.pinterest.com/zymphonies/"
@@ -59,4 +63,18 @@ version = "7.x-1.0"
 core = "7.x"
 project = "parallax_zymphonies_theme"
 datestamp = "1446838440"
+
+
+; Information added by Drupal.org packaging script on 2017-11-27
+version = "7.x-1.1"
+core = "7.x"
+project = "parallax_zymphonies_theme"
+datestamp = "1511797091"
+
+
+; Information added by Drupal.org packaging script on 2017-11-30
+version = "7.x-1.3"
+core = "7.x"
+project = "parallax_zymphonies_theme"
+datestamp = "1512070387"
 

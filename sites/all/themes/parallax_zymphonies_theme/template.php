@@ -94,14 +94,14 @@ function parallax_zymphonies_theme_preprocess_node(&$variables) {
   }
 }
 
-function medical_page_alter($page) {
+function parallax_zymphonies_theme_page_alter($page) {
   // <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
   $viewport = array(
     '#type' => 'html_tag',
     '#tag' => 'meta',
     '#attributes' => array(
     'name' =>  'viewport',
-    'content' =>  'width=device-width'
+    'content' =>  'width=device-width, initial-scale=1.0, maximum-scale=1'
     )
   );
   drupal_add_html_head($viewport, 'viewport');

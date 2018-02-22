@@ -221,3 +221,9 @@
   }
 
 }
+
+@media screen and (min-width: 641px) {
+  #main-menu > ul.menu { 
+    display: inline-block !important;
+  }
+}
