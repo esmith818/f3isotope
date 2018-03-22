@@ -1,0 +1,13 @@
+name = Highcharts
+description = Charts module integration with Highcharts library.
+package = Charts
+core = 7.x
+dependencies[] = libraries
+dependencies[]  = charts
+
+; Information added by Drupal.org packaging script on 2018-03-08
+version = "7.x-2.0"
+core = "7.x"
+project = "charts"
+datestamp = "1520494693"
+
