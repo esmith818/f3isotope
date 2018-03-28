@@ -2554,6 +2554,10 @@ div.view-unpublished-content .views-row {
   width: 100%;
 }
 
+div.view-admin-tasks th {
+  background-color: #aaa;
+}
+
 table.ui-datepicker-calendar th {
   background-color: darkred;
 }
