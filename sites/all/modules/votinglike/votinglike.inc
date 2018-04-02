@@ -25,7 +25,7 @@ function votinglike_action(){
         
     $dislike_show 	=$_REQUEST['dislike_show'];
     $tips_show		=$_REQUEST['tips_show'];
-    $newButton 	=votinglike_output($type, $eid, $dislike_show, $vars, $show_tips);  
+    $newButton 	=votinglike_output($type, $eid, $dislike_show, $vars, $tips_show);  
       
 	$output = array('success' =>1, 'newButton' =>$newButton);
     
