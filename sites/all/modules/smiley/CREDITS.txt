@@ -1,0 +1,19 @@
+This module was originally made and maintained upto Drupal 4.7 release by:
+Steven Wittens <unconed@drupal.org>.
+
+
+This module was then maintained upto Drupal 6 release by:
+Gurpartap Singh <http://drupal.org/user/41470/contact>
+
+
+And is currently maintained and actively developed by:
+Yonas Yanfa <http://drupal.org/user/473174/contact>
+
+
+Roving smileys package contributed by:
+Couzin Hub <http://drupal.org/user/133581>
+
+
+NOTE: Please don't rip the Example and Roving smileys and use them without this
+    module. Their creators spent quite some time creating those little buggers
+    for dedicated use with the smileys module.

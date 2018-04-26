@@ -1,0 +1,134 @@
+<?php
+/**
+ * @file
+ * Installs, updates, and uninstalls smiley.
+ */
+
+/**
+ * Implements hook_install().
+ */
+function smiley_install() {
+  $t = get_t();
+  module_load_include('inc', 'smiley', 'smiley.admin');
+  smiley_import();
+  $acronyms = array(
+    '*angel*'              => "O:-) O:) O+) O=) 0:-) 0:) 0+) 0=) (A) (a)",
+    '*smile*'              => ":-) :) +) =) :smile:",
+    '*sad*'                => ":-( :( +( =( :-(( :(( +(( =(( :sad:",
+    '*wink*'               => ";-) ;) ^_~ :wink:",
+    '*blum3*'              => ":-P :P :-p :p +P =P +p =p :-b :b +b =b :tongue:",
+    '*dirol*'              => "8-) 8) B) :COOL: :cool:",
+    '*biggrin*'            => ":-D :D +D =D :biggrin:",
+    '*blush*'              => ":-[ :[ ;'> ;-. :blush:",
+    '*shok*'               => "=-O =O =-o =0 O_O O_o o_O O_0 o_0 0_O 0_o",
+    '*kiss2*'              => ":-* :* :-{} :{} +{} ={} ^.^ :kiss: *KISS*",
+    '*cray2*'              => ":'( :'-( ",
+    '*secret*'             => ":-X :-x X: x: :-# :# :secret:",
+    '*aggressive*'         => ">:o >:O >+O >:o >+o :-@ :angry:",
+    '*fool*'               => ":-| :| =| :-|",
+    // Quoted.
+    '*beee*'               => ":-\ :-/ :\ :-\\",
+    '*mosking*'            => "*JOKINGLY* 8P 8p",
+    '*diablo*'             => "]:-> }:-> ]:> }:> >:-] >:] (6) :diablo: *DIABLO*",
+    '*music2*'             => "[:-} [:} [:-}",
+    '*air_kiss*'           => "*KISSED* ",
+    '*bad*'                => ":-! :! :-~ ;-~ :(~ +(~ =(~ :bad:",
+    '*boredom*'            => "*TIRED* |-0 :boredom:",
+    '*stop*'               => "*STOP* :stop:",
+    '*kiss3*'              => "*KISSING*",
+    '*give_rose*'          => "@}->-- @}-:-- @>}--,-`--- (F) (f) @}->--",
+    '*good*'               => ":GOOD: :good: *GOOD* *THUMBS_UP*",
+    '*drinks*'             => "*DRINK* :drink:",
+    '*man_in_love*'        => "*IN_LOVE*",
+    '*bomb*'               => "@=",
+    '*wacko*'              => "%) %-) :-$ :$ :wacko: :WACKO:",
+    '*clapping*'           => "*BRAVO* :BRAVO: :bravo: :clapping:",
+    '*ROFL*'               => "*ROFL* :ROFL: :rofl: :-)))) :-))))) :-)))))) :)))) :))))) :)))))) =)))) =))))) =))))))",
+    '*pardon*'             => "*PARDON* =] :PARDON: :pardon:",
+    '*nea*'                => "*NO* *NO*",
+    '*crazy*'              => "*CRAZY* :crazy:",
+    '*unknw*'              => "*DONT_KNOW* *UNKNOWN* :HZ: :hz:",
+    '*sorry2*'             => "*SORRY* :sorry:",
+    '*yahoo*'              => "*YAHOO* *YAHOO!* :YAHOO: :yahoo:",
+    '*dance4*'             => "*DANCE* :dance:",
+    '*help*'               => "*HELP*",
+    '*ok*'                 => "*OK*",
+    // Quoted.
+    '*new_russian*'        => "\\m/ \\M/",
+    '*preved*'             => "*HELLO* *PREVED* *PRIVET* *HI*",
+    '*acute*'              => ";D *ACUTE*",
+    '*bye*'                => "*BYE*",
+    '*mail1*'              => "*WRITE* *MAIL*",
+    '*dash1*'              => "*DASH* *WALL*",
+    '*yes3*'               => "*YES*",
+    '*scratch_one-s_head*' => "*SCRATCH*",
+    '*lol*'                => "*LOL* :-)) :)) =)) +)) :-))) :))) :lol:",
+    '*i-m_so_happy*'       => "*HAPPY* :happy: :HAPPY: :Happy: ^^",
+    '*pleasantry*'         => "*db* :db:",
+  );
+  $sql = 'UPDATE {smiley} SET status = 1, acronyms = ? WHERE acronyms = ?';
+  foreach ($acronyms as $k => $v) {
+    db_query($sql, array($k . ' ' . $v, $k));
+  }
+  db_query('UPDATE {smiley} SET status = 1 WHERE uri LIKE \'standart%\'');
+
+  $smiley = '<img src="' . base_path() . drupal_get_path('module', 'smiley') . '/packs/kolobok/yahoo.gif" alt=":-)"/>';
+  drupal_set_message($t('!module has been installed. !smiley', array(
+    '!module' => l($t('Smileys'), 'admin/config/content/smiley'),
+    '!smiley' => $smiley,
+  )));
+  drupal_set_message('Please ' . l($t('configure your text formats'), 'admin/config/content/formats') . ' to enable Smiley.');
+}
+
+/**
+ * Implements hook_uninstall().
+ */
+function smiley_uninstall() {
+  variable_del('smiley_path');
+}
+
+/**
+ * Implements hook_schema().
+ */
+function smiley_schema() {
+  $schema['smiley'] = array(
+    'description' => 'Stores smiley',
+    'fields' => array(
+      'sid' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => 'Primary Key: Unique smiley ID.',
+      ),
+      'uri' => array(
+        'description' => 'Smiley picture name.',
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => TRUE,
+      ),
+      'status' => array(
+        'description' => 'Boolean indicating whether the smiley is allowed.',
+        'type' => 'int',
+        'default' => 0,
+      ),
+      'acronyms' => array(
+        'description' => 'Smiley acronyms.',
+        'type' => 'varchar',
+        'length' => 128,
+        'default' => '',
+      ),
+      'description' => array(
+        'description' => 'Smiley description.',
+        'type' => 'varchar',
+        'length' => 64,
+        'default' => '',
+      ),
+    ),
+    'primary key' => array('sid'),
+    'unique keys' => array(
+      'uri' => array('uri'),
+    ),
+  );
+
+  return $schema;
+}

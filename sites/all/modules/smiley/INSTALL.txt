@@ -1,0 +1,16 @@
+Installation
+-------------------
+
+1. Extract and copy the contents of the smiley package to the Drupal
+   "sites/all/modules" directory.
+
+2. Go to the Modules administration page and enable the Smiley module.
+
+3. Go to "Configuration > Content authoring > Text formats" and enable the
+   Smiley filtering for your preferred Input formats (e.g. Filtered HTML).
+   NOTE: Make sure that "Smileys filter" is placed below "Limit allowed HTML
+   tags" under the "Filter processing order" settings. Otherwise, your smileys
+   may not show up.
+
+4. Go to "Configuration > Content authoring > Smileys" and add your own smiley
+   either manually or by importing packs (see README.txt).

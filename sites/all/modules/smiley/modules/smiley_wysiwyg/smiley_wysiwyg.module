@@ -1,0 +1,120 @@
+<?php
+/**
+ * @file
+ * Defines a Smiley WYSIWYG module.
+ */
+
+/**
+ * Implements hook_menu().
+ */
+function smiley_wysiwyg_menu() {
+  $items = array();
+  $items['smiley_wysiwyg/dialog'] = array(
+    'page callback' => 'smiley_wysiwyg_dialog',
+    'page arguments' => array(),
+    'access callback' => 'user_access',
+    'access arguments' => array('access content'),
+    'type' => MENU_CALLBACK,
+  );
+
+  return $items;
+}
+
+/**
+ * Output a WYSIWYG dialog.
+ */
+function smiley_wysiwyg_dialog() {
+  ?>
+  <html>
+  <head>
+    <style type="text/css">
+      body {
+        background: #FFF
+      }
+
+      * {
+        font-size: 12px;
+        color: #000;
+        font-family: Tahoma
+      }
+
+      td {
+        vertical-align: top;
+        padding: 1px;
+      }
+
+      td.rtool label {
+        white-space: nowrap;
+        font-weight: bold
+      }
+
+      label {
+        cursor: pointer;
+        outline: 0
+      }
+
+      #smiley_container {
+        height: 450px;
+        overflow: auto;
+        padding-bottom: 5px;
+        background-color: #dfe6ef;
+      }
+
+      #smiley_container IMG {
+        border: 1px solid #dfe6ef;
+        opacity: 0.5;
+      }
+
+      #smiley_container IMG:hover {
+        cursor: pointer;
+        border-color: red;
+        opacity: 1.0;
+      }
+    </style>
+    <script type="text/javascript">
+      function WysiwygPluginSmileyClose() {
+        window.parent.WysiwygPluginSmileyClose();
+      }
+      function WysiwygPluginSmileyPaste(content) {
+        window.parent.Drupal.wysiwyg.instances[window.parent.WysiwygPluginSmileyInstanceId].insert('<span>' + content + '</span>');
+        WysiwygPluginSmileyClose();
+      }
+    </script>
+  </head>
+  <body>
+  <div id="smiley_container">
+  <?php
+
+  $smiley_info = & drupal_static(__FUNCTION__);
+  if (!isset($smiley_info)) {
+    global $base_path;
+
+    $smileys = db_query('SELECT * FROM {smiley} WHERE status = 1')->fetchAll();
+    $path = $base_path . variable_get('smiley_path', drupal_get_path('module', 'smiley') . '/packs');
+    $smiley_info = '';
+
+    foreach ($smileys as $smiley) {
+      $arr = explode(' ', $smiley->acronyms);
+      $smiley_info .= '<img title="' . $arr[0] . '" class="smiley" src="' . $path . '/' . $smiley->uri . '" alt="' . $smiley->description . '" onclick="WysiwygPluginSmileyPaste(this.title);"/>';
+    }
+  }
+
+  echo $smiley_info;
+
+  ?>
+  </div>
+  <div style="text-align:center;">
+    <input type="button" onclick="WysiwygPluginSmileyClose();" value="Close"/>
+  </div>
+
+  </body>
+  </html>
+  <?php
+}
+
+/**
+ * Implements hook_wysiwyg_include_directory().
+ */
+function smiley_wysiwyg_wysiwyg_include_directory($type) {
+  return $type;
+}

@@ -1,0 +1,118 @@
+<?php
+
+/**
+ * @file
+ * Tests for Smiley module.
+ */
+
+
+/**
+ * Web test for smiley module to test the main regex expression
+ * for all possible situations to make sure it always works properly.
+ */
+class SmileyFilterWebTestCase extends DrupalWebTestCase {
+
+  /**
+   * Ensure the smiley module is enabled.
+   */
+  public function setUp($modules = array()) {
+    $modules[] = 'smiley';
+    parent::setUp($modules);
+  }
+
+  /**
+   * Return information about test case.
+   */
+  public static function getInfo() {
+    return array(
+      'name' => 'Smiley Filter unit tests',
+      'description' => 'Unit tests for testing the main regex expression of the module (smiley_filter_process function).',
+      'group' => 'Smiley',
+    );
+  }
+
+  private function runTests($tests, $smileys) {
+    foreach ($tests as $test) {
+      foreach ($test as $text => $expected_text) {
+        $this->CheckSmileysWereReplaced($text, $expected_text, $smileys);
+      }
+    }
+  }
+
+  /**
+   * Checks the $original_text converting to a $expected_text correctly.
+   */
+  private function CheckSmileysWereReplaced($original_text, $expected_text, $smileys) {
+    // Small improvement to ease testing.
+    $expected_text = str_replace("SMILE", "<img[^>]+>", preg_quote($expected_text));
+    // Run the filter.
+    $new_text = smiley_process_text($original_text, $smileys);
+    // Find was all smiles was replaced on <img src=... />?
+    $match = preg_match("#" . $expected_text . "#", $new_text);
+    // Check it and display a message.
+    $this->assertTrue($match, t('All smileys were replaced correctly. Pattern: "@pattern"', array('@pattern' => $original_text)));
+  }
+
+  /**
+   * Make sure the <img> element contains the right src value.
+   */
+  public function testImageSrc() {
+    $smileys = array(
+      (object) array(
+        'sid' => '45',
+        'uri' => 'kolobok/smile.gif',
+        'status' => '1',
+        'acronyms' => '*smile* :-) :) +) =) :smile:',
+        'description' => 'Smile',
+      ),
+    );
+
+    $packs_path = variable_get('smiley_path', drupal_get_path('module', 'smiley') . '/packs');
+    $css_class = check_plain(variable_get('smiley_css_class', ''));
+    if (!empty($css_class)) {
+      $css_class = 'class="' . $css_class . '" ';
+    }
+
+    foreach ($smileys as $smiley) {
+      foreach (explode(' ', $smiley->acronyms) as $acronym) {
+        $expected_text = '<img src="' .  file_create_url('smiley://' . $smiley->uri) . '" alt="' . $smiley->description . '" ' . $css_class . '/>';
+        $new_text = smiley_process_text($acronym, $smileys);
+
+        $this->assertTrue($new_text == $expected_text, t('All smileys were replaced correctly. Pattern: "@pattern"', array('@pattern' => $acronym)));
+      }
+    }
+  }
+
+  /**
+   * Tests for all possible positions of smileys.
+   */
+  public function testRegexSmilePositions() {
+    $smileys = array(
+      (object) array(
+        'sid' => '45',
+        'uri' => 'kolobok/smile.gif',
+        'status' => '1',
+        'acronyms' => '*smile* :-) :) +) =) :smile:',
+        'description' => 'Smile',
+      ),
+    );
+
+    $tests = array(
+        array('simple text with :) in it' => 'simple text with SMILE in it'),
+        array('some another test with a smile at the end :)' => 'some another test with a smile at the end SMILE'),
+        array(':) :)) :)))' => 'SMILE :)) :)))'),
+        array(":)\n:))\n:)))" => "SMILE\n:))\n:)))"),
+        array(':) :) :) :)' => 'SMILE SMILE SMILE SMILE'),
+        // Make sure we can handle leading and trailing white space.
+        array('   :) :) :) :)   ' => 'SMILE SMILE SMILE SMILE'),
+        array(':) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :) :)' => 'SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE SMILE'),
+        array("This is a sentence. :)\nThis is another sentence." => "This is a sentence. SMILE\nThis is another sentence."),
+        array('*smile* :-) :) +) =) :smile:' => 'SMILE SMILE SMILE SMILE SMILE SMILE'),
+        array('8-O :-)' => '8-O SMILE'),
+        array('8O :) additional text here :)' => '8O SMILE additional text here SMILE'),
+        array("<p>This is a test :smile:<br>" => "<p>This is a test SMILE<br>"),
+    );
+
+    $this->runTests($tests, $smileys);
+  }
+}

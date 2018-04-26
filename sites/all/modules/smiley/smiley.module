@@ -1,0 +1,214 @@
+<?php
+/**
+ * @file
+ * Implements the necessary hooks.
+ */
+
+/**
+ * Implements hook_stream_wrappers().
+ */
+function smiley_stream_wrappers() {
+  return array(
+    'smiley' => array(
+      'name' => t('Smiley images'),
+      'class' => 'SmileyStreamWrapper',
+      'description' => t('Smiley images.'),
+      'type' => STREAM_WRAPPERS_LOCAL_NORMAL,
+    ),
+  );
+}
+
+/**
+ * Implements hook_menu().
+ */
+function smiley_menu() {
+  $items = array();
+  $items['admin/config/content/smiley'] = array(
+    'title' => 'Smileys',
+    'description' => 'Customize your smiley.',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('smiley_overview_form'),
+    'access arguments' => array('administer smiley'),
+    'file' => 'smiley.admin.inc',
+  );
+  $items['admin/config/content/smiley/view'] = array(
+    'title' => 'View',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+  );
+  $items['admin/config/content/smiley/settings'] = array(
+    'title' => 'Settings',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('smiley_settings_form'),
+    'access arguments' => array('administer smiley'),
+    'weight' => 0,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'smiley.admin.inc',
+  );
+  $items['admin/config/content/smiley/import'] = array(
+    'title' => 'Import',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('smiley_import_form'),
+    'access arguments' => array('administer smiley'),
+    'weight' => 1,
+    'type' => MENU_LOCAL_TASK,
+    'file' => 'smiley.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+function smiley_theme() {
+  return array(
+    'smiley_overview_form' => array(
+      'file' => 'smiley.admin.inc',
+      'render element' => 'form',
+    ),
+  );
+}
+
+/**
+ * Implements hook_permission().
+ */
+function smiley_permission() {
+  return array(
+    'administer smiley' => array(
+      'title' => t('Administer smiley'),
+      'restrict access' => TRUE,
+    ),
+  );
+}
+
+/**
+ * Implements hook_filter_info().
+ */
+function smiley_filter_info() {
+  $filters['smiley'] = array(
+    'title' => t('Smileys filter'),
+    'description' => t('Replaces textual smiley inside posts with images.'),
+    'process callback' => 'smiley_filter_process',
+    'tips callback' => 'smiley_filter_tips',
+  );
+
+  return $filters;
+}
+
+/**
+ * Smileys filter process callback.
+ */
+function smiley_filter_process($text, $filter, $format) {
+  $smileys = smiley_get_all();
+  return smiley_process_text($text, $smileys);
+}
+
+/**
+ * Replaces smile codes in the text by corresponded images.
+ */
+function smiley_process_text($text, $smileys) {
+  global $base_path;
+
+  $output = '';
+  $ignore = 0;
+  $packs_path = variable_get('smiley_path', drupal_get_path('module', 'smiley') . '/packs');
+  $css_class = check_plain(variable_get('smiley_css_class', ''));
+  if (!empty($css_class)) {
+    $css_class = 'class="' . $css_class . '" ';
+  }
+
+  $chunks = preg_split('#(</?(?:code|pre)[^>]*>)#i', $text, -1, PREG_SPLIT_DELIM_CAPTURE);
+
+  foreach ($chunks as $chunk) {
+    if (preg_match('#(</?)(code|pre)[^>]*(>)#i', $chunk, $matches)) {
+      $tag = $matches[1] . $matches[2] . $matches[3];
+      if ($tag == '<code>' || $tag == '<pre>') {
+        $ignore++;
+      }
+      elseif ($tag == '</code>' || $tag == '</pre>') {
+        $ignore--;
+      }
+    }
+    // There are no unclosed code and pre tags.
+    elseif ($chunk && !$ignore) {
+      foreach ($smileys as $smiley) {
+        $image = '<img src="' .  file_create_url('smiley://' . $smiley->uri) . '" alt="' . $smiley->description . '" ' . $css_class . '/>';
+        $acronyms = explode(' ', $smiley->acronyms);
+
+        foreach ($acronyms as $acronym) {
+          if (strlen($acronym) == 0) {
+            continue;
+          }
+
+          $chunk = preg_replace('~(?<=^|>|\s|&nbsp;)(' . preg_quote($acronym, '~') . ')(?=$|</|<area\s*/?>|<base\s*/?>|<br\s*/?>|<col\s*/?>|<command\s*/?>|<embed\s*/?>|<hr\s*/?>|<img\s*/?>|<input\s*/?>|<link\s*/?>|<meta\s*/?>|<param\s*/?>|<source\s*/?>|\s|&nbsp;)~U', $image, $chunk);
+        }
+      }
+    }
+    $output .= $chunk;
+  }
+
+  return $output;
+}
+
+function smiley_get_all() {
+    $cache = &drupal_static(__FUNCTION__);
+    if (!isset($cache)) {
+        $cache = db_query('SELECT * FROM {smiley} WHERE status=1')->fetchAll();
+    }
+    return $cache;
+}
+
+/**
+ * Returns HTML for a table containing the list of smileys.
+ *
+ * @return string
+ *   An HTML string containing a table of text shortcuts and the smileys they
+ *   will be replaced with.
+ */
+function smiley_filter_tips_table() {
+  $form = array();
+  $rows = array();
+  $header = array(t('Smiley'), t('Acronyms'));
+  $packs_path = variable_get('smiley_path', drupal_get_path('module', 'smiley') . '/packs');
+
+  $result = db_query('SELECT * FROM {smiley} WHERE status = 1');
+
+  foreach ($result as $smiley) {
+    $acronyms = explode(' ', $smiley->acronyms);
+    $rows[] = array(
+      '<img src="' . check_url($GLOBALS['base_url'] . '/' . $packs_path . '/' . $smiley->uri) . '" alt="' . $acronyms[0] . '" title="' . check_plain($smiley->description) . '" class="smiley-class" />',
+      check_plain($smiley->acronyms),
+    );
+  }
+
+  $form['smiley_table'] = array(
+    '#markup' => theme('table', array('header' => $header, 'rows' => $rows)),
+  );
+
+  return drupal_render($form);
+}
+
+/**
+ * Return HTML for filter tips.
+ *
+ * @param object $filter
+ *   An object representing the filter.
+ * @param object $format
+ *   An object representing the text format the filter is contained in.
+ * @param bool $long
+ *   Whether this callback should return a short tip to display in a form
+ *   (FALSE), or whether a more elaborate filter tips should be returned for
+ *   theme_filter_tips() (TRUE).
+ *
+ * @return string
+ *   Translated text to display as a tip.
+ */
+function smiley_filter_tips($filter, $format, $long = FALSE) {
+  if ($long) {
+    return t('If you include a textual smiley in your post (see chart below), it will be replaced by a graphical smiley.') . '<br />' . smiley_filter_tips_table();
+  }
+  else {
+    return t('<a href="!smiley_help">Textual smiley</a> will be replaced with graphical ones.', array('!smiley_help' => url('filter/tips', array('fragment' => 'filter-smiley'))));
+  }
+}

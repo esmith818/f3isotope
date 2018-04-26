@@ -1,0 +1,13 @@
+name = Smiley
+description = Replaces textual smileys inside posts with images.
+package = Content authoring
+configure = admin/config/content/smiley
+core = 7.x
+files[] = includes/SmileyStreamWrapper.inc
+files[] = smiley.test
+; Information added by Drupal.org packaging script on 2015-05-18
+version = "7.x-1.1"
+core = "7.x"
+project = "smiley"
+datestamp = "1431969182"
+
