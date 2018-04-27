@@ -2579,3 +2579,11 @@ a.ui-datepicker-next:hover {
 .ui-widget-header .ui-icon {
   background-image: url(../images/ui-icons_ffffff_256x240.png);
 }
+
+/* *************************************************
+// Smiley module
+// ************************************************/
+.smiley {
+  height: 32px;
+}
+
