@@ -2382,7 +2382,7 @@ div.profile .field-name-field-sub-region {
 .node-back-blast,
 .node-preblast,
 .node-jerky {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: white;
   -khtml-border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -2529,7 +2529,7 @@ div#edit_field_qic_tax_und_chosen {
 }
 
 div.comment.clearfix {
-  background-color: rgba(0, 0, 0, 0.12);
+  background-color: white;
   -khtml-border-radius: 4px;
   -moz-border-radius: 4px;
   -webkit-border-radius: 4px;
@@ -2579,3 +2579,11 @@ a.ui-datepicker-next:hover {
 .ui-widget-header .ui-icon {
   background-image: url(../images/ui-icons_ffffff_256x240.png);
 }
+
+/* *************************************************
+// Smiley module
+// ************************************************/
+.smiley {
+  height: 32px;
+}
+
