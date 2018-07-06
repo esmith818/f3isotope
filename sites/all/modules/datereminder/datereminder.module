@@ -974,3 +974,10 @@ function _datereminder_anonymous_link($node) {
   $link = '<div class=\'request-reminder-anonymous\'>' . $link . '</div>';
   return $link;
 }
+
+/**
+ * Return true if this user can administer reminders.
+ */
+function datereminder_access_can_administer_reminders() {
+  return user_access('DATEREMINDER_ADMINISTER_REMINDERS');
+}

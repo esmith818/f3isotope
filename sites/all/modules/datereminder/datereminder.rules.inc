@@ -28,6 +28,18 @@ function datereminder_rules_action_info() {
               ),
           )
       ),
+      'datereminder_rules_action_delete_all_node_reminders' => array(
+          'label' => t('Delete all reminders for node'),
+          'group' => t('Date Reminder'),
+          'access callback' => 'datereminder_access_can_administer_reminders',
+          'parameter' => array(
+              'node' => array(
+                  'type' => 'node',
+                  'label' => t('Node'),
+                  'save' => true,
+            )
+          )
+      ),
       'datereminder_rules_action_set_enable_reminder' => array(
           'label' => t('Set reminder enable on node'),
           'group' => t('Date Reminder'),
@@ -42,9 +54,7 @@ function datereminder_rules_action_info() {
                   'label' => t('Enable setting'),
               ),
           )
-
       )
-
   );
   return $actions;
 }
@@ -192,5 +202,17 @@ function datereminder_rules_action_set_enable_reminder($node, $enable) {
   if ($type_enabled >= DATEREMINDER_TYPE_ALLOWED) {
     $node->datereminder_enabled =
             $enable ? DATEREMINDER_TYPE_ON : DATEREMINDER_TYPE_RETAIN;
+  }
+}
+
+/**
+ * Delete all reminders for a node.
+ *
+ * @param type $node
+ */
+function datereminder_rules_action_delete_all_node_reminders($node) {
+  if (isset($node)) {
+    module_load_include('inc', 'datereminder', 'includes/db7');
+   _datereminder_clean_node_reminders($node->nid);
   }
 }

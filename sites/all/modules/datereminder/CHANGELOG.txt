@@ -1,3 +1,7 @@
+Date Reminder 7.x-1.14 2018-06-07
+----------------------------------------
+#2962444 by dwillcox: Rule to delete all reminders in a node
+
 Date Reminder 7.x-1.13 2017-11-18
 ----------------------------------------
 #2885272 by Postovan Dumitru, dwillcox: Date field tranlation
