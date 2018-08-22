@@ -1,0 +1,154 @@
+<?php
+/**
+ * @file
+ * views_aggregator.module
+ *
+ * Module implementig post-query aggregation functions for Views tables.
+ */
+
+module_load_include('inc', 'views_aggregator', 'views_aggregator_functions');
+
+/**
+ * Implements hook_help().
+ */
+function views_aggregator_help($path, $arg) {
+  switch ($path) {
+    case 'admin/help#views_aggregator':
+      return t('See the <a href="@README">README</a> for View configuration instructions and examples or browse the <a href="@project">project</a> support queue.', array(
+        '@project' => url('http://drupal.org/project/views_aggregator'),
+        '@README' => url(drupal_get_path('module', 'views_aggregator') . '/README.txt'),
+      ));
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function views_aggregator_theme() {
+  $base_path = drupal_get_path('module', 'views_aggregator');
+  $themes = array(
+    'views_aggregator_plugin_style_table' => array(
+      // Pass $form to theme_views_aggregator_plugin_style_table($vars)
+      'render element' => 'form',
+      'path' => $base_path . '/views',
+      'file' => 'theme_views_aggregator_plugin_style_table.inc',
+    ),
+  );
+  return $themes;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function views_aggregator_views_api() {
+  return array(
+    'api' => views_api_version(),
+    'path' => drupal_get_path('module', 'views_aggregator') . '/views',
+  );
+}
+
+/**
+ * Get all avaialble aggregation function definitions.
+ *
+ * @param string $name
+ *   The name of the desired function or NULL to retrieve an array of functions.
+ *
+ * @return array
+ *   An array of aggregation function info.
+ */
+function views_aggregator_get_aggregation_functions_info($name = NULL) {
+
+  $aggregation_functions = &drupal_static(__FUNCTION__);
+
+  if (empty($aggregation_functions)) {
+    // Collect aggregations functions defined in other modules via their
+    // hook_views_aggregation_functions_info() implementations.
+    $aggregation_functions = module_invoke_all('views_aggregation_functions_info');
+
+    // @todo sort by display name, rather than function name
+    ksort($aggregation_functions);
+
+    // Let other modules alter the aggregation functions by implementing
+    // hook_views_aggregation_functions_info_alter().
+    drupal_alter('views_aggregation_functions_info', $aggregation_functions);
+  }
+  // $aggregation_functions = (array)$aggregation_functions;
+  if (empty($name)) {
+    return $aggregation_functions;
+  }
+  return isset($aggregation_functions[$name]) ? $aggregation_functions[$name] : array();
+}
+
+/**
+ * Returns the result value at the intersection of column and row.
+ *
+ * @param object $field_handler
+ *   The handler associated with the table column being requested.
+ * @param int $row_num
+ *   index into the View result rows array
+ * @param bool $rendered
+ *   Whether to return the rendered as opposed to the raw value of the cell
+ *
+ * @return string
+ *   The content of the cell
+ */
+function views_aggregator_get_cell($field_handler, $row_num, $rendered = FALSE) {
+  return $field_handler->view->style_plugin->get_cell($field_handler, $row_num, $rendered);
+}
+
+/**
+ * Prepare to render the view results as a table style.
+ *
+ * The rendering to HTML happens in views-aggregator-results-table.tpl.php
+ *
+ * See also:
+ * template_preprocess_views_view_table(&$vars) in Views
+ */
+function template_preprocess_views_aggregator_results_table(&$vars) {
+  $view = $vars['view'];
+
+  $vars['grouping_field'] = '';
+  foreach ($view->style_plugin->options['info'] as $field_name => $info) {
+    if (!empty($info['has_aggr']) && !empty($info['aggr']['views_aggregator_group_and_compress'])) {
+      $vars['grouping_field'] = $field_name;
+      break;
+    }
+  }
+  $vars['grouping_field_class'] = $view->style_plugin->options['group_aggregation']['grouping_field_class'];
+
+  if (!empty($view->totals) && array_filter($view->totals) != array()) {
+    $vars['totals'] = $view->totals;
+  }
+  $vars['totals_row_position'] =
+    $view->style_plugin->options['column_aggregation']['totals_row_position'][1] +
+    $view->style_plugin->options['column_aggregation']['totals_row_position'][2];
+
+  $vars['totals_row_class'] = $view->style_plugin->options['column_aggregation']['totals_row_class'];
+
+  if (!isset($view->row_index)) {
+    // Have seen trouble when this is not set...
+    $view->row_index = 0;
+  }
+  // At this point template_preprocess_views_view(), will have put the (sorted)
+  // $view->result on $vars['rows'].
+  // template_preprocess_views_view_table() will add row and field classes,
+  // caption etc. It will also call render_fields() but that won't do anything
+  // as we've already done the rendering in view_aggregator_plugin_style_table::
+  // pre_render().
+  // The order of the rendered rows is determined by $view->result, while the
+  // content of each row comes from $view->style_plugin->rendered_fields.
+
+  // Loop code taken from template_preprocess_views_view_table(),
+  // file: views/theme/theme.inc
+  $options = $view->style_plugin->options;
+  $columns = $view->style_plugin->sanitize_columns($options['columns'], $view->field);
+  foreach ($columns as $field => $column) {
+    if ($field == $column) {
+      // Make all columns click-sortable, including Math Expressions.
+      $view->field[$field]->definition['click sortable'] = TRUE;
+    }
+  }
+
+  $vars['attributes_array']['id'] = drupal_html_id('views_aggregator_datatable');
+  template_preprocess_views_view_table($vars);
+}

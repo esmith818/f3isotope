@@ -23,7 +23,6 @@ ErrorDocument 404 /index.php
 # Set the default handler.
 DirectoryIndex index.php index.html index.htm
 
-
 # Override PHP settings that cannot be changed at runtime. See
 # sites/default/default.settings.php and drupal_environment_initialize() in
 # includes/bootstrap.inc for settings that can be changed at runtime.
@@ -61,18 +60,37 @@ DirectoryIndex index.php index.html index.htm
 <IfModule mod_rewrite.c>
   RewriteEngine on
 
+  # Redirect http to https
+  RewriteCond %{SERVER_PORT} !^443$
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
+  RewriteRule ^(.*)$ https://%{SERVER_NAME}%{REQUEST_URI} [R=301,L]
+
   # Anonymous visitors looking for wp-admin hacks are redirected off site.
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
   RewriteRule ^\S*\/*wp-(.*) https://theannoyingsite.com/ [NC,L]
 
   # Set "protossl" to "s" if we were accessed via https://.  This is used later
   # if you enable "www." stripping or enforcement, in order to ensure that
   # you don't bounce between http and https.
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
   RewriteRule ^ - [E=protossl]
   RewriteCond %{HTTPS} on
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
   RewriteRule ^ - [E=protossl:s]
 
   # Make sure Authorization HTTP header is available to PHP
   # even when running as CGI or FastCGI.
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
   RewriteRule ^ - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
   # Block access to "hidden" directories whose names begin with a period. This
@@ -88,6 +106,9 @@ DirectoryIndex index.php index.html index.htm
   # If you do not have mod_rewrite installed, you should remove these
   # directories from your webroot or otherwise protect them from being
   # downloaded.
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
   RewriteRule "(^|/)\." - [F]
 
   # If your site can be accessed both with and without the 'www.' prefix, you
@@ -105,6 +126,9 @@ DirectoryIndex index.php index.html index.htm
   # (http://www.example.com/... will be redirected to http://example.com/...)
   # uncomment the following:
   RewriteCond %{HTTP_HOST} ^www\.(.+)$ [NC]
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
   RewriteRule ^ http%{ENV:protossl}://%1%{REQUEST_URI} [L,R=301]
 
   # Modify the RewriteBase if you are using Drupal in a subdirectory or in a
@@ -122,6 +146,9 @@ DirectoryIndex index.php index.html index.htm
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteCond %{REQUEST_URI} !=/favicon.ico
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
   RewriteRule ^ index.php [L]
 
   # Rules to correctly serve gzip compressed CSS and JS files.
@@ -130,15 +157,27 @@ DirectoryIndex index.php index.html index.htm
     # Serve gzip compressed CSS files if they exist and the client accepts gzip.
     RewriteCond %{HTTP:Accept-encoding} gzip
     RewriteCond %{REQUEST_FILENAME}\.gz -s
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
     RewriteRule ^(.*)\.css $1\.css\.gz [QSA]
 
     # Serve gzip compressed JS files if they exist and the client accepts gzip.
     RewriteCond %{HTTP:Accept-encoding} gzip
     RewriteCond %{REQUEST_FILENAME}\.gz -s
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
     RewriteRule ^(.*)\.js $1\.js\.gz [QSA]
 
     # Serve correct content types, and prevent mod_deflate double gzip.
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
     RewriteRule \.css\.gz$ - [T=text/css,E=no-gzip:1]
+RewriteCond %{REQUEST_URI} !^/\.well-known/acme-challenge/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/cpanel-dcv/[0-9a-zA-Z_-]+$
+RewriteCond %{REQUEST_URI} !^/\.well-known/pki-validation/[A-F0-9]{32}\.txt(?:\ Comodo\ DCV)?$
     RewriteRule \.js\.gz$ - [T=text/javascript,E=no-gzip:1]
 
     <FilesMatch "(\.js\.gz|\.css\.gz)$">

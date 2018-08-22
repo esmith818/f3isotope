@@ -1,0 +1,38 @@
+<?php
+
+/**
+ * @file views_aggregator_more_functions.module
+ * Defines additional aggregation functions for Views Aggregator Plus.
+ */
+
+/**
+ * Implements hook_views_aggregation_functions_info().
+ */
+function views_aggregator_more_functions_views_aggregation_functions_info() {
+  $functions = array(
+    // By edc1, see https://www.drupal.org/node/2299055
+    'views_aggregator_group_seq_number' => array(
+      'group' => t('Group sequence no. *'),
+      'column' => NULL,
+      'is_renderable' => TRUE,
+    ),
+  );
+  return $functions;
+}
+
+/**
+ * Replace the cell by the group sequence number (resulting table row number).
+ *
+ * @param array $groups
+ * @param object $field_handler, not used
+ * @param int $start_value, # at which to start the sequence, defaults to 1
+ * @return values
+ */
+function views_aggregator_group_seq_number($groups, $field_handler = NULL, $start_value = NULL) {
+  $values = array();
+  $count = (!isset($start_value) || $start_value == '') ? 1 : (int) $start_value;
+  foreach ($groups as $group => $rows) {
+    $values[$group] = $count++;
+  }
+  return $values;
+}
