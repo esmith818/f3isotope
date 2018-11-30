@@ -8,9 +8,8 @@ configure = admin/config/content/charts
 files[] = views/charts_plugin_style_chart.inc
 files[] = views/charts_plugin_display_chart.inc
 
-; Information added by Drupal.org packaging script on 2018-03-08
-version = "7.x-2.0"
+; Information added by Drupal.org packaging script on 2018-08-15
+version = "7.x-2.1"
 core = "7.x"
 project = "charts"
-datestamp = "1520494693"
-
+datestamp = "1534294687"

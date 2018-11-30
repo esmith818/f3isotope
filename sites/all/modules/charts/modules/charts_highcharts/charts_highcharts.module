@@ -29,6 +29,9 @@ function charts_highcharts_library() {
       'js' => array(
         array('data' => $highcharts_info['library path'] . '/js/highcharts.js', 'type' => 'file'),
       ),
+      'css' => array(
+        array('data' => $highcharts_info['library path'] . '/css/highcharts.css', 'type' => 'file'),
+      ),
     );
   }
   $library['charts_highcharts'] = array(

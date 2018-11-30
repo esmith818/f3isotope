@@ -167,7 +167,7 @@ class charts_plugin_style_chart extends views_plugin_style {
       '#title_position' => $this->options['title_position'],
       '#tooltips' => $this->options['tooltips'],
       '#data_labels' => $this->options['data_labels'],
-      '#colors' => $this->options['colors'],
+      '#colors' => ($this->options['type'] != 'geomap') ? $this->options['colors'] : FALSE,
       '#background' => $this->options['background'] ? $this->options['background'] : 'transparent',
       '#legend' => $this->options['legend_position'] ? TRUE : FALSE,
       '#legend_position' => $this->options['legend_position'] ? $this->options['legend_position'] : NULL,
