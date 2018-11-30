@@ -114,25 +114,6 @@ function profile2_page_menu() {
 }
 
 /**
- * Menu load callback.
- *
- * Returns the profile object for the given user. If there is none yet, a new
- * object is created.
- */
-function profile2_by_uid_load($uid, $type_name) {
-  if ($uid && is_numeric($uid) && ($account = user_load($uid))) {
-    $profile = profile2_load_by_user($account, $type_name);
-    if (!$profile) {
-      $profile = profile2_create(array('type' => $type_name));
-      $profile->setUser($account);
-      $profile->is_new = TRUE;
-    }
-    return $profile;
-  }
-  return FALSE;
-}
-
-/**
  * Returns the base path to use as profile page.
  */
 function profile2_page_get_base_path($profile_type) {
@@ -249,37 +230,4 @@ function profile2_page_form_profile2_type_form_alter(&$form, &$form_state) {
     '#default_value' => !empty($type->is_new) || !empty($type->data['use_page']),
   );
   $form['data']['#tree'] = TRUE;
-}
-
-/**
- * Implements hook_profile2_type_insert().
- */
-function profile2_page_profile2_type_insert(ProfileType $type) {
-  // Do not directly issue menu rebuilds here to avoid potentially multiple
-  // rebuilds. Instead, let menu_get_item() issue the rebuild on the next page.
-  if (!empty($type->data['use_page'])) {
-    variable_set('menu_rebuild_needed', TRUE);
-  }
-}
-
-/**
- * Implements hook_profile2_type_update().
- */
-function profile2_page_profile2_type_update(ProfileType $type) {
-  // Rebuild the menu if use_page or the type name has been changed.
-  // @see profile2_page_profile2_type_insert()
-  if (empty($type->data['use_page']) != empty($type->original->data['use_page']) || (!empty($type->data['use_page']) &&  $type->type != $type->original->type)) {
-    variable_set('menu_rebuild_needed', TRUE);
-  }
-}
-
-/**
- * Implements hook_profile2_type_delete()
- */
-function profile2_page_profile2_type_delete($type) {
-  // Do not directly issue menu rebuilds here to avoid potentially multiple
-  // rebuilds. Instead, let menu_get_item() issue the rebuild on the next page.
-  if (!empty($type->data['use_page'])) {
-    variable_set('menu_rebuild_needed', TRUE);
-  }
 }

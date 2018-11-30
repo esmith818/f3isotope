@@ -4,9 +4,8 @@ core = 7.x
 dependencies[] = profile2
 dependencies[] = og
 package = "Organic groups"
-; Information added by Drupal.org packaging script on 2018-03-17
-version = "7.x-1.4"
+; Information added by Drupal.org packaging script on 2018-09-08
+version = "7.x-1.5"
 core = "7.x"
 project = "profile2"
-datestamp = "1521299286"
-
+datestamp = "1536401587"
