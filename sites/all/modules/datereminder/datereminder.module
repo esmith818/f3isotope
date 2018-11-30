@@ -770,6 +770,11 @@ function datereminder_allowed_access_node($node = NULL,
     return FALSE;
   }
 
+  if (!node_access('view', $node)) {
+    // User shouldn't be able to view this node at all.
+    return FALSE;
+  }
+
   if (user_access(DATEREMINDER_VIEW_OTHER_USER_REMINDERS)
           || user_access(DATEREMINDER_ADMINISTER_REMINDERS)) {
     return TRUE;

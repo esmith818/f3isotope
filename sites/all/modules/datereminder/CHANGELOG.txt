@@ -1,3 +1,7 @@
+Date Reminder 7.x-1.15 2018-11-27
+----------------------------------------
+XXXXXX by dwillcox: Security issue
+
 Date Reminder 7.x-1.14 2018-06-07
 ----------------------------------------
 #2962444 by dwillcox: Rule to delete all reminders in a node
