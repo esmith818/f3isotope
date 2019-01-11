@@ -1524,11 +1524,12 @@ input[type="submit"],
 input[type="reset"],
 input[type="button"] {
   border: 0;
+  border-radius: 5px;
   color: #fff;
-  margin: 0 5px 5px 0;
-  padding: 15px 15px;
+  margin: 4px 0px 4px 0;
+  padding: 8px 10px;
   display: inline-block;
-  font-size: 16px;
+  font-size: 14px;
   background-color: darkred;
 }
 
@@ -2244,8 +2245,39 @@ p#front-body-title {
   margin: 10px !important;
 }
 
-select#edit-field-subregion-tid {
+#views-exposed-form-calendar-v2-page-1,
+#views-exposed-form-calendar-v2-page-3,
+#views-exposed-form-calendar-v2-page-4 {
+  border-radius: 5px;
+  padding: 15px;
+  margin: 20px 0;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+#edit-field-subregion-tid-wrapper,
+#edit-type-wrapper,
+#edit-field-event-style-value-wrapper,
+#edit-field-f-event-title-value-wrapper {
+  float: none !important;
+}
+
+#views-exposed-form-calendar-v2-page-1 #views-reset-button,
+#views-exposed-form-calendar-v2-page-1#views-submit-button {
+  float: left;
+  margin-top: unset;
+}
+
+select#edit-field-subregion-tid,
+select#edit-type,
+select#edit-field-event-style-value,
+input#edit-field-f-event-title-value {
   width: 100%;
+  font-size: 14px;
+}
+
+input#edit-submit-calendar-v2,
+input#edit-reset {
+  margin-top: unset !important;
 }
 
 #edit-field-subregion-tid-wrapper .description {
@@ -2255,6 +2287,18 @@ select#edit-field-subregion-tid {
 
 .calendar-calendar td.empty {
   color: #edcdcd !important;
+}
+
+#view-item-calendar_v2 .calendar-calendar .inner p {
+  color: black;
+}
+
+.calendar-calendar .day-view .full td.multi-day div.dayview {
+  height: 50px;
+}
+
+.calendar-calendar .day-view .views-field-field-q-tax {
+  color: black;
 }
 
 .calendar-calendar .month-view .full td.multi-day div.monthview,
