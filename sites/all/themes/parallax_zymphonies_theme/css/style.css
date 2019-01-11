@@ -2507,13 +2507,16 @@ form#f3-event-node-form {
 .form-item-field-f-event-title-und-0-value label,
 .form-item-field-event-style-und label,
 .form-item-field-qic-tax-und label,
-.form-item-field-topic-und-0-value label {
+.form-item-field-topic-und-0-value label,
+.form-item-field-preblast-link-und-0-value label {
   font-weight: bold;
 }
 
 input#edit-title,
 input#edit-field-backblast-date-und-0-value-datepicker-popup-0,
-input#edit-field-event-location-und-0-value {
+input#edit-field-event-location-und-0-value,
+input#edit-field-topic-und-0-value,
+input#edit-field-preblast-link-und-0-value {
   font-size: 14px;
 }
 
@@ -2521,6 +2524,7 @@ input#edit-title,
 input#edit-field-event-location-und-0-value,
 input#edit-field-f-event-title-und-0-value,
 input#edit-field-topic-und-0-value,
+input#edit-field-preblast-link-und-0-value,
 div#edit_field_ao_und_chosen,
 div#edit_field_pax_und_chosen,
 div#edit_field_q_tax_und_chosen,
