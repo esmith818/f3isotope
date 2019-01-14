@@ -2635,3 +2635,69 @@ a.ui-datepicker-next:hover {
   height: 32px;
 }
 
+/* *************************************************
+// Business Profile Listing
+// ************************************************/
+
+.profile2-busine {
+    background: rgba(255, 255, 255, .5);
+    padding: 16px;
+    border-radius: 5px;
+}
+
+.field-name-field-pro2-b2b-industry .field-item {
+  float: left;
+  background: darkred !important;
+  padding: 1px 10px;
+  margin: 2px;
+  vertical-align: middle;
+  color: white;
+}
+
+.field-name-field-pro2-b2b-business-name {
+  clear: both;
+}
+
+.field-name-field-pro2-b2b-business-name .field-item {
+  font-weight: bold;
+  font-size: x-large;
+}
+
+.field-name-field-pro2-b2b-business-name .field-label,
+.field-name-field-pro2-b2b-business-desc .field-label {
+  visibility: hidden;
+}
+
+.field-name-field-pro2-b2b-business-contact,
+.field-name-field-pro2-b2b-business-phone,
+.field-name-field-pro2-b2b-business-email,
+.field-name-field-pro2-b2b-business-website,
+.field-name-field-pro2-b2b-business-address,
+.field-name-field-pro2-b2b-business-city,
+.field-name-field-pro2-b2b-business-zip {
+  margin-top: 10px;
+}
+
+/* *************************************************
+// Business Profile Form
+// ************************************************/
+
+#profile2-edit-busine-form {
+  background: rgba(255, 255, 255, .5);
+  padding: 16px;
+  border-radius: 5px;
+}
+
+#profile2-edit-busine-form label {
+  font-weight: bold;
+}
+
+#edit_profile_busine_field_pro2_b2b_industry_und_chosen {
+  width: 100% !important;
+}
+
+#profile2-edit-busine-form input[type=text],
+#profile2-edit-busine-form textarea {
+  width: 100%;
+  font-size: 14px;
+}
