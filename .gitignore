@@ -4,11 +4,10 @@ sites/*/settings*.php
 # Ignore paths that contain user-generated content.
 sites/*/files
 sites/*/private
-files
-files/*
 
 # Ignore server-specific configuration files
 .htaccess
 .htaccess*
 php.ini
 php.ini*
+
