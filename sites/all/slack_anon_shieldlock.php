@@ -22,5 +22,5 @@ curl_setopt($slack_call, CURLOPT_HTTPHEADER, array(
     "Content-Length: " . strlen($json_string))
 );
 
-$result = curl_exec($slack_call);
+curl_exec($slack_call);
 curl_close($slack_call);
