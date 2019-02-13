@@ -2587,8 +2587,44 @@ div.comment.clearfix {
   width: 100%;
 }
 
-div#edit-profile-main-field-pro2-profile-pic {
-  display: none;
+#profile2-edit-main-form,
+.profile2-main {
+    background-color: rgba(255,255,255,.5);
+    padding: 16px;
+    border-radius: 4px;
+}
+
+#profile2-edit-main-form label {
+  font-weight: bold;
+}
+
+#profile2-edit-main-form input[type=text],
+#profile2-edit-main-form textarea {
+  width: 100%;
+  font-size: 14px;
+}
+
+.profile2-main .field {
+  padding-bottom: 6px;
+}
+
+.profile2-main .field-name-field-pro2-1st-post-location .field-item {
+    float: none !important;
+    background: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.view-pax-profiles th {
+  background: lightgray;
+}
+
+.view-pax-profiles th a {
+  color: black;
+}
+
+.view-pax-profiles th a:hover {
+  color: darkred;
 }
 
 div.view-unpublished-content a {
