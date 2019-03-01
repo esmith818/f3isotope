@@ -2737,3 +2737,12 @@ a.ui-datepicker-next:hover {
   width: 100%;
   font-size: 14px;
 }
+
+/* *************************************************
+// Smiley Help Page
+// ************************************************/
+
+li#filter-smiley img {
+  width: 60px;
+}
+

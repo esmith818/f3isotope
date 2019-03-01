@@ -172,7 +172,7 @@ function smiley_filter_tips_table() {
   $header = array(t('Smiley'), t('Acronyms'));
   $packs_path = variable_get('smiley_path', drupal_get_path('module', 'smiley') . '/packs');
 
-  $result = db_query('SELECT * FROM {smiley} WHERE status = 1 ORDER BY acronyms ASC');
+  $result = db_query('SELECT * FROM {smiley} WHERE status = 1');
 
   foreach ($result as $smiley) {
     $acronyms = explode(' ', $smiley->acronyms);
