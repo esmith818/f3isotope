@@ -1,6 +1,13 @@
 # Ignore configuration files that may contain sensitive information.
 sites/*/settings*.php
+sites/*/slack_anon_shieldlock.php
 
 # Ignore paths that contain user-generated content.
 sites/*/files
 sites/*/private
+
+# Ignore server-specific configuration files
+.htaccess
+.htaccess*
+php.ini
+php.ini*
