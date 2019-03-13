@@ -1290,6 +1290,10 @@ img.scale-with-grid {
   vertical-align: top;
 }
 
+.field-name-comment-body {
+  font-size: 14px;
+}
+
 .comment .attribution {
   display: table-cell;
   padding: 0 10px 0 0;
@@ -2667,8 +2671,9 @@ a.ui-datepicker-next:hover {
 /* *************************************************
 // Smiley module
 // ************************************************/
-.smiley {
-  height: 32px;
+.smiley,
+li#filter-smiley img {
+  width: 40px;
 }
 
 /* *************************************************
@@ -2737,12 +2742,3 @@ a.ui-datepicker-next:hover {
   width: 100%;
   font-size: 14px;
 }
-
-/* *************************************************
-// Smiley Help Page
-// ************************************************/
-
-li#filter-smiley img {
-  width: 60px;
-}
-
