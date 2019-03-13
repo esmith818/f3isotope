@@ -25,7 +25,7 @@ function profile2_page_own($base_path) {
  * Profile view page.
  */
 function profile2_page_view($profile) {
-  return $profile->view('page');
+  return $profile->view('page', NULL, TRUE);
 }
 
 /**
@@ -88,13 +88,16 @@ function profile2_form_submit_delete($form, &$form_state) {
 function profile2_page_delete_confirm_form($form, &$form_state, $profile) {
   global $user;
   $form_state += array('profile2' => $profile);
+  $type = profile2_get_types($profile->type);
   if (isset($profile->uid) && $profile->uid === $user->uid) {
-    $confirm_question = t('Are you sure you want to delete your own %label profile ?', array('%label' => $profile->label));
+    $confirm_question = t('Are you sure you want to delete your own %label profile ?',
+      array('%label' => $type->getTranslation('label')));
   }
   elseif (user_access('administer profiles')) {
     $user_account = user_load($profile->uid);
     if (!empty($user_account)) {
-      $confirm_question = t("Are you sure you want to delete profile %label of user %user?", array('%label' => $profile->label, '%user' => $user_account->name));
+      $confirm_question = t("Are you sure you want to delete profile %label of user %user?",
+        array('%label' => $type->getTranslation('label'), '%user' => $user_account->name));
     }
   }
   return confirm_form($form, $confirm_question, $profile->path());
@@ -102,7 +105,8 @@ function profile2_page_delete_confirm_form($form, &$form_state, $profile) {
 
 function profile2_page_delete_confirm_form_submit($form, &$form_state) {
   $profile = $form_state['profile2'];
+  $type = profile2_get_types($profile->type);
   $profile->delete();
-  drupal_set_message(t('Deleted %label.', array('%label' => $profile->label)));
+  drupal_set_message(t('Deleted %label.', array('%label' => $type->getTranslation('label'))));
   $form_state['redirect'] = 'user/' . $profile->uid;
 }

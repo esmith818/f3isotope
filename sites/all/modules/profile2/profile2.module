@@ -113,11 +113,11 @@ function profile2_menu() {
 
   // Define page which provides form to generate profiles using
   // Devel generate module.
-  if (module_exists('devel')) {
+  if (module_exists('devel_generate')) {
     $items['admin/config/development/generate/profile2'] = array(
       'title' => 'Generate profiles',
       'description' => 'Generate a given number of profiles for users. Optionally override current user profiles.',
-      'access arguments' => array('administer profile2'),
+      'access arguments' => array('administer profiles'),
       'page callback' => 'drupal_get_form',
       'page arguments' => array('profile2_generate_form'),
       'file' => 'profile2.devel.inc',
@@ -380,7 +380,7 @@ function profile2_user_view($account, $view_mode, $langcode) {
           '#title' => $profile_type->getTranslation('label'),
           '#prefix' => '<a id="profile-' . $profile->type . '"></a>',
         );
-        $account->content['profile_' . $type]['view'] = $profile->view('account');
+        $account->content['profile_' . $type]['view'] = $profile->view($view_mode);
       }
     }
   }
@@ -932,12 +932,11 @@ class Profile extends Entity {
   }
 
   public function defaultLabel() {
-    if (module_exists('profile2_i18n')) {
-      // Run the label through i18n_string() using the profile2_type label
-      // context, so the default label (= the type's label) gets translated.
-      return entity_i18n_string('profile2:profile2_type:' . $this->type . ':label', $this->label);
-    }
-    return $this->label;
+    // Return a label that combines the type name and user name, translatable.
+    return t('@type profile for @user', array(
+      '@type' => profile2_get_types($this->type)->getTranslation('label'),
+      '@user' => format_username($this->user()),
+    ));
   }
 
   public function buildContent($view_mode = 'full', $langcode = NULL) {
@@ -950,6 +949,19 @@ class Profile extends Entity {
   }
 
   public function save() {
+    // Don't create a new profile if the user already have one of the same type.
+    $existing_profile = profile2_load_by_user($this->uid, $this->type);
+    if (empty($this->pid) && !empty($existing_profile)) {
+      watchdog('profile2_create', serialize(array(
+        'message' => 'Profile already exists',
+        'uid' => $this->uid,
+        'type' => $this->type,
+        'path' => current_path(),
+        'logged_in_user' => $GLOBALS['user']->uid,
+      )), array(), WATCHDOG_WARNING);
+      return;
+    }
+
     // Care about setting created and changed values. But do not automatically
     // set a created values for already existing profiles.
     if (empty($this->created) && (!empty($this->is_new) || !$this->pid)) {
@@ -1060,9 +1072,13 @@ function profile2_form_field_ui_field_edit_form_alter(&$form, &$form_state) {
  * Implements hook_field_access().
  */
 function profile2_field_access($op, $field, $entity_type, $profile = NULL, $account = NULL) {
-  if ($entity_type == 'profile2' && $op == 'view' && !empty($field['settings']['profile2_private']) && !user_access('administer profiles', $account)) {
+  if ($entity_type == 'profile2' && $op == 'view' && isset($profile)) {
+    // Check if the profile type is accessible (e.g. applicable to the role).
+    if (!profile2_access($op, $profile, $account)) {
+      return FALSE;
+    }
     // Deny view access, if someone else views a private field.
-    if (isset($profile)) {
+    if (!empty($field['settings']['profile2_private']) && !user_access('administer profiles', $account)) {
       $account = isset($account) ? $account : $GLOBALS['user'];
       if ($account->uid != $profile->uid) {
         return FALSE;
@@ -1156,4 +1172,24 @@ function profile2_by_uid_load($uid, $type_name) {
     return $profile;
   }
   return FALSE;
+}
+
+/**
+ * Implements hook_preprocess_page().
+ *
+ * Fix the page titles on the profile2 edit tabs.
+ * We want the titles to be the full profile label, giving the user name & profile name.
+ */
+function profile2_preprocess_page(&$vars) {
+  // This is true when editing a profile in a tab.
+  if (!empty($vars['page']['content']['system_main']['#user_category'])) {
+    $ptype = $vars['page']['content']['system_main']['#user_category'];
+    if (!empty($vars['page']['content']['system_main']["profile_$ptype"])) {
+      $item = $vars['page']['content']['system_main']["profile_$ptype"];
+      // If we've found an item, and it has a profile2 entity, display the title.
+      if (!empty($item['#entity'])) {
+        $vars['title'] = $item['#entity']->label();
+      }
+    }
+  }
 }

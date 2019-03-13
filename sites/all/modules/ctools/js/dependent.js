@@ -154,32 +154,12 @@
                 len++;
               }
 
-              // Lines 167-182 added to replace 160-165 for Dependent Filters per
-              // https://www.drupal.org/project/views_dependent_filters/issues/2791731
-
-              // var $original = $('#' + id);
-              // if ($original.is('fieldset') || $original.is('textarea')) {
-              //   continue;
-              // }
-
-              // var object = $original.parent();
-
-              var object = $('#' + id + '-wrapper');
-              if (!object.size()) {
-                // Some elements can't use the parent() method or they can
-                // damage things. They are guaranteed to have wrappers but
-                // only if dependent.inc provided them. This check prevents
-                // problems when multiple AJAX calls cause settings to build
-                // up.
-                var $original = $('#' + id);
-                if ($original.is('fieldset') || $original.is('textarea')) {
-                  continue;
-                }
-
-              // var object = $original.parent();
-
-                object = $('#' + id).parent();
+              var $original = $('#' + id);
+              if ($original.is('fieldset') || $original.is('textarea')) {
+                continue;
               }
+
+              var object = $original.parent();
 
               if (Drupal.settings.CTools.dependent[id].type == 'disable') {
                 if (Drupal.settings.CTools.dependent[id].num <= len) {
