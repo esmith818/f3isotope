@@ -63,6 +63,9 @@ function smiley_wysiwyg_dialog() {
       #smiley_container IMG {
         border: 1px solid #dfe6ef;
         opacity: 0.5;
+        height: 40px;
+        width: 40px;
+        padding: 6px;
       }
 
       #smiley_container IMG:hover {
@@ -89,7 +92,7 @@ function smiley_wysiwyg_dialog() {
   if (!isset($smiley_info)) {
     global $base_path;
 
-    $smileys = db_query('SELECT * FROM {smiley} WHERE status = 1')->fetchAll();
+    $smileys = db_query('SELECT * FROM {smiley} WHERE status = 1 ORDER BY acronyms ASC')->fetchAll();
     $path = $base_path . variable_get('smiley_path', drupal_get_path('module', 'smiley') . '/packs');
     $smiley_info = '';
 
@@ -103,7 +106,7 @@ function smiley_wysiwyg_dialog() {
 
   ?>
   </div>
-  <div style="text-align:center;">
+  <div style="text-align:center; padding-top:12px;">
     <input type="button" onclick="WysiwygPluginSmileyClose();" value="Close"/>
   </div>
 

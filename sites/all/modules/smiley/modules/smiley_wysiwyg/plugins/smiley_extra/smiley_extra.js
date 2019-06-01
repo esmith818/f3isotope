@@ -13,12 +13,12 @@ Drupal.wysiwyg.plugins['smiley_extra'] = {
     }
 
     var url = Drupal.settings.basePath + 'index.php?q=smiley_wysiwyg/dialog';
-    var ifr = '<iframe src="' + url + '" style="width:600px;height:500px;border:0"></iframe>';
+    var ifr = '<iframe src="' + url + '" style="width:556px;height:370px;border:0"></iframe>';
 
     var div = document.createElement('div');
-    div.style.width = '600px';
+    div.style.width = '563px';
     div.style.padding = '0px';
-    div.style.height = '400px';
+    div.style.height = '385px';
     div.style.position = 'fixed';
     div.style.left = '50%';
     div.style.top = '50%';
@@ -26,9 +26,9 @@ Drupal.wysiwyg.plugins['smiley_extra'] = {
     div.style.marginTop = '-200px';
     div.style.backgroundColor = '#FFFFFF';
     div.style.zIndex = '1000001';
-    div.style.borderWidth = '5px';
+    div.style.borderWidth = '3px';
     div.style.borderStyle = 'solid';
-    div.style.borderColor = '#EDEDED';
+    div.style.borderColor = 'darkgrey';
     div.id = 'smiley-wysiwyg';
     div.innerHTML = ifr;
 

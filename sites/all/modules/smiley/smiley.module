@@ -209,6 +209,6 @@ function smiley_filter_tips($filter, $format, $long = FALSE) {
     return t('If you include a textual smiley in your post (see chart below), it will be replaced by a graphical smiley.') . '<br />' . smiley_filter_tips_table();
   }
   else {
-    return t('<a href="!smiley_help">Textual smiley</a> will be replaced with graphical ones.', array('!smiley_help' => url('filter/tips', array('fragment' => 'filter-smiley'))));
+    return t('<a href="!smiley_help" target="_blank">Textual smiley</a> will be replaced with graphical ones.', array('!smiley_help' => url('filter/tips', array('fragment' => 'filter-smiley'))));
   }
 }
