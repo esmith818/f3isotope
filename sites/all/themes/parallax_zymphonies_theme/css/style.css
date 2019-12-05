@@ -2742,3 +2742,12 @@ li#filter-smiley img {
   width: 100%;
   font-size: 14px;
 }
+
+/* *************************************************
+// AO Frequency Block
+// ************************************************/
+
+.ao-frequency {
+  background: white;
+  padding: 6px;
+}
