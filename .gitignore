@@ -11,3 +11,4 @@ sites/*/private
 .htaccess*
 php.ini
 php.ini*
+error_log
