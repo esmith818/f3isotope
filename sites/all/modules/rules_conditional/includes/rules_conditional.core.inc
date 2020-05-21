@@ -39,6 +39,11 @@ abstract class RulesConditionalContainer extends RulesContainerPlugin implements
     }
   }
 
+  public function destroy() {
+    $this->fluentElement = NULL;
+    parent::destroy();
+  }
+
   /**
    * Adds an action to the active fluent statement.
    *
@@ -259,7 +264,7 @@ abstract class RulesConditionalElement extends RulesActionContainer implements R
    * @return RulesPlugin
    */
   public function getPreviousSibling() {
-    if (isset($this->parent)) {
+    if (isset($this->parent) && method_exists($this->parent, 'getIterator')) {
       $previous = NULL;
       foreach ($this->parent->getIterator() as $element) {
         if ($element === $this) {
@@ -269,6 +274,25 @@ abstract class RulesConditionalElement extends RulesActionContainer implements R
       }
     }
     // Otherwise, return nothing if no previous sibling is applicable.
+    return NULL;
+  }
+
+  /**
+   * Gets sibling elements.
+   *
+   * @return array of RulesPlugin objects.
+   */
+  public function getAllSibling() {
+    if (isset($this->parent)) {
+      $siblings = NULL;
+      foreach ($this->parent->getIterator() as $element) {
+        if (!($element === $this)) {
+          $siblings[] = $element;
+        }
+      }
+      return $siblings;
+    }
+    // Otherwise, return nothing if no sibling.
     return NULL;
   }
 
@@ -404,6 +428,12 @@ abstract class RulesConditionalPredicateElement extends RulesConditionalElement 
     $array = parent::__sleep();
     $array['predicate'] = 'predicate';
     return $array;
+  }
+
+  public function __clone() {
+    parent::__clone();
+    $this->predicate = clone $this->predicate;
+    $this->predicate->parent = $this;
   }
 
   public function label() {

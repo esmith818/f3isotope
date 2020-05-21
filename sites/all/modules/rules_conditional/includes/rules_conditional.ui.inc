@@ -37,7 +37,7 @@ class RulesConditionalPluginUI extends RulesContainerPluginUI {
  * Empty UI for doing nothing with the plugin.
  */
 class RulesConditionalEmptyUI extends RulesConditionalPluginUI {
-  public function form(&$form, &$form_state, $options = array()) {
+  public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
     // Save element.
     $this->element->save();
     // Redirect right away.
@@ -75,7 +75,7 @@ class RulesConditionalPredicateUI extends RulesContainerPluginUI {
   /**
    * Delegates the form to the predicate.
    */
-  public function form(&$form, &$form_state, $options = array()) {
+  public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
     $baseCount = count(explode('/', RulesPluginUI::$basePath));
     $op = arg($baseCount + 2);
     if ($op == 'add') {
@@ -196,7 +196,7 @@ class RulesConditionalCaseUI extends RulesConditionalPluginUI {
  * UI for while loops to add extra description.
  */
 class RulesConditionalWhileUI extends RulesConditionalPredicateUI {
-  public function form(&$form, &$form_state, $options = array()) {
+  public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
     parent::form($form, $form_state, $options);
 
     // Display help for while loop.
@@ -237,7 +237,7 @@ class RuleConditionSetUI extends RulesConditionContainerUI {
     $this->actions = $object->actionContainer();
   }
 
-  public function form(&$form, &$form_state, $options = array()) {
+  public function form(&$form, &$form_state, $options = array(), $iterator = NULL) {
     $form_state['rules_element'] = $this->set;
 
     $form += array('actions' => array('#weight' => -5, '#tree' => TRUE));

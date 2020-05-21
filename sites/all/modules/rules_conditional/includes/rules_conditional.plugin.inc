@@ -382,6 +382,25 @@ class RulesConditionalDefaultCase extends RulesConditionalElement {
     parent::__construct();
   }
 
+  public function canEvaluate(RulesState $state) {
+    // Check if this element has fallen through.
+    if ($previous = $this->getPreviousSibling()) {
+      /** @var $previous self */
+      if ($previous->fallThrough() && $previous->canEvaluate($state)) {
+        return $this->isDefault();
+      }
+    }
+
+    $siblings = $this->getAllSibling();
+    $sibling_can_evaluate = FALSE;
+    foreach ($siblings as $sibling) {
+      if ($sibling->canEvaluate($state)) {
+        $sibling_can_evaluate = TRUE;
+      }
+    }
+    return ($sibling_can_evaluate) ? FALSE : $this->isDefault();
+  }
+
   public function isDefault() {
     return TRUE;
   }

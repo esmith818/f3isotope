@@ -72,3 +72,14 @@ function rules_conditional_while($predicate, array $settings = array()) {
 function rule_condition_set(array $variables = array()) {
   return new RuleConditionSet($variables);
 }
+
+/**
+ * Implements hook_module_implements_alter().
+ */
+function rules_conditional_module_implements_alter(&$implementations, $hook) {
+  if ($hook == 'rules_plugin_info') {
+    $group = $implementations['rules_conditional'];
+    unset($implementations['rules_conditional']);
+    $implementations['rules_conditional'] = $group;
+  }
+}
