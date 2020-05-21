@@ -1,6 +1,14 @@
+# Ignore server specific settings.
+.htaccess*
+php.ini*
+error_log
+
 # Ignore configuration files that may contain sensitive information.
 sites/*/settings*.php
 
 # Ignore paths that contain user-generated content.
 sites/*/files
 sites/*/private
+
+# Ignore files that are independent of Drupal.
+sites/all/slack_anon_shieldlock.php
