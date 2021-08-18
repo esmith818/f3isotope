@@ -16,6 +16,10 @@ function db_maintenance_uninstall() {
   variable_del('db_maintenance_log');
   variable_del('db_maintenance_all_tables');
 
+  variable_del('db_maintenance_use_time_interval');
+  variable_del('db_maintenance_time_interval_start');
+  variable_del('db_maintenance_time_interval_end');
+
   // Delete the list of tables for each DB.
   $result = db_query("
     SELECT name FROM {variable}
