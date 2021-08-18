@@ -23,6 +23,20 @@ function prlp_menu() {
 }
 
 /**
+ * Implements hook_drupal_goto_alter().
+ */
+function prlp_drupal_goto_alter(&$path, &$options, &$http_response_code) {
+  if (isset($_SESSION['pass_reset_hash'])) {
+    // This is likely Drupal 7.79+ redirecting the password reset confirm form
+    // back to itself, after which it immediately unsets the session value.
+    $parts = explode('/', $path);
+    if (isset($parts[4]) && $parts[4] === 'confirm' && $parts[0] === 'user' && $parts[1] === 'reset') {
+      $_SESSION['prlp_reset_hash'] = $_SESSION['pass_reset_hash'];
+    }
+  }
+}
+
+/**
  * Alters the user password reset landing page.
  *
  * Lets the user enter a new password directly on the landing page
@@ -36,6 +50,8 @@ function prlp_form_user_pass_reset_alter(&$form, &$form_state) {
     if (empty($action)) {
       // Inject the username/password change form into the current form.
       user_account_form($form, $form_state);
+      $user_account_form_id = 'user_account_form';
+      drupal_alter(array('form','form_user_account_form'), $form, $form_state, $user_account_form_id);
       // ???
       $form['#user_category'] = 'account';
       // Hide certain fields in $form.
@@ -50,9 +66,13 @@ function prlp_form_user_pass_reset_alter(&$form, &$form_state) {
           $element['#access'] = FALSE;
         }
       }
-      // Unset $form['#action'] so that the form doesn't get submitted to the
-      // user profile edit page. Instead it gets submitted to self.
+      // The form does not properly rebuild itself if #action is set (which
+      // makes it redirect in the middle of form rebuild), or on D7.79+ if the
+      // session value isn't set (which makes it error out).
       unset($form['#action']);
+      if (isset($_SESSION['prlp_reset_hash']) && empty($form_state['input'])) {
+        $_SESSION['pass_reset_hash'] = $_SESSION['prlp_reset_hash'];
+      }
       // Remove the part of the message that talks about changing password
       // later, since they are changing it right here.
       if (!empty($form['message']['#markup'])) {
@@ -81,6 +101,17 @@ define('PRLP_DESTINATION_DEFAULT', 'user/%uid/edit');
 function prlp_user_pass_reset_submit($form, &$form_state) {
   global $user;
   @list($uid, $timestamp, $hashed_pass, $action) = $form_state['build_info']['args'];
+  if ($hashed_pass === 'confirm') {
+    // Drupal 7.79+: the form redirected to a 'confirm' URL so the hash is not
+    // in the URL anymore.
+    if (isset($_SESSION['prlp_reset_hash'])) {
+      $hashed_pass = $_SESSION['prlp_reset_hash'];
+      unset($_SESSION['prlp_reset_hash']);
+    }
+    else {
+      drupal_set_message(t('Could not find password hash; login will likely fail.'), 'warning');
+    }
+  }
 
   // When processing the one-time login link, we have to make sure that a user
   // isn't already logged in.
@@ -232,23 +263,37 @@ function prlp_module_implements_alter(&$implementations, $hook) {
 }
 
 /**
- * Implements hook_variable_info() so that variable values can be
- * translated.
+ * Implements hook_variable_info().
+ *
+ * Allow to translate variable values.
  */
 function prlp_variable_info($options) {
   $variables['prlp_confirmation_message_existing_users'] = array(
     'type' => 'string',
-    'title' => t('Confirmation message for new users', array(), $options),
-    'default' => 'Thank you for setting your password, the registration process has completed.',
-    'description' => t('Confirmation message that will be shown to new users after they set their password.', array(), $options),
-    'required' => FALSE,
-  );
-  $variables['prlp_confirmation_message_new_users'] = array(
-    'type' => 'drupal_path',
     'title' => t('Confirmation message for existing users', array(), $options),
     'default' => 'Your new password has been saved.',
     'description' => t('Confirmation message that will be shown to existing users after they changed their password.', array(), $options),
+    'group' => 'prlp_settings',
+    'required' => FALSE,
+  );
+  $variables['prlp_confirmation_message_new_users'] = array(
+    'type' => 'string',
+    'title' => t('Confirmation message for new users', array(), $options),
+    'default' => 'Thank you for setting your password, the registration process has completed.',
+    'description' => t('Confirmation message that will be shown to new users after they set their password.', array(), $options),
+    'group' => 'prlp_settings',
     'required' => FALSE,
   );
   return $variables;
+}
+
+/**
+ * Implements hook_variable_group_info().
+ */
+function prlp_variable_group_info() {
+  $groups['prlp_settings'] = array(
+    'title' => t('Password reset settings'),
+    'description' => t('Settings of the prlp module.'),
+  );
+  return $groups;
 }
