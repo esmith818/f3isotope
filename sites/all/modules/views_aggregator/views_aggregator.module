@@ -48,7 +48,7 @@ function views_aggregator_views_api() {
 }
 
 /**
- * Get all avaialble aggregation function definitions.
+ * Get all available aggregation function definitions.
  *
  * @param string $name
  *   The name of the desired function or NULL to retrieve an array of functions.
@@ -93,7 +93,9 @@ function views_aggregator_get_aggregation_functions_info($name = NULL) {
  *   The content of the cell
  */
 function views_aggregator_get_cell($field_handler, $row_num, $rendered = FALSE) {
-  return $field_handler->view->style_plugin->get_cell($field_handler, $row_num, $rendered);
+  if (isset($field_handler->view->style_plugin)) {
+    return $field_handler->view->style_plugin->get_cell($field_handler, $row_num, $rendered);
+  }
 }
 
 /**

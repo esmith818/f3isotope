@@ -44,8 +44,6 @@ SIMILAR MODULES
 
 You may want to try also:
 
- * Views Mail | http://drupal.org/project/views_mail
-   See what's different: http://drupal.org/node/795782
  * Simplenews | http://drupal.org/project/simplenews
    Some pieces of code were inspired by Simplenews module.
 

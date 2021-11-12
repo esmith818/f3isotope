@@ -1,0 +1,14 @@
+name = Autoload
+description = PHP 5.3+ autoloader for objects.
+core = 7.x
+php = 5.3
+
+; For "autoload_test_entity".
+test_dependencies[] = entity
+test_dependencies[] = views
+
+; Information added by Drupal.org packaging script on 2018-05-05
+version = "7.x-2.0"
+core = "7.x"
+project = "autoload"
+datestamp = "1525516690"

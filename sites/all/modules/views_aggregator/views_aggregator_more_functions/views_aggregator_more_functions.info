@@ -4,9 +4,8 @@ package = Views
 dependencies[] = views_aggregator
 core = 7.x
 
-; Information added by Drupal.org packaging script on 2015-01-28
-version = "7.x-1.4"
+; Information added by Drupal.org packaging script on 2020-04-23
+version = "7.x-1.5"
 core = "7.x"
 project = "views_aggregator"
-datestamp = "1422421087"
-
+datestamp = "1587612677"

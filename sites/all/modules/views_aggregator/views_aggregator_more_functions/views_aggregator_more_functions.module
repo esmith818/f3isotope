@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @file views_aggregator_more_functions.module
+ * @file
  * Defines additional aggregation functions for Views Aggregator Plus.
  */
 
@@ -13,7 +13,12 @@ function views_aggregator_more_functions_views_aggregation_functions_info() {
     // By edc1, see https://www.drupal.org/node/2299055
     'views_aggregator_group_seq_number' => array(
       'group' => t('Group sequence no. *'),
-      'column' => NULL,
+      'column' => t('Group count'),
+      'is_renderable' => TRUE,
+    ),
+    'views_aggregator_percentage' => array(
+      'group' => t('Percentage'),
+      'column' => t('100%'),
       'is_renderable' => TRUE,
     ),
   );
@@ -24,15 +29,54 @@ function views_aggregator_more_functions_views_aggregation_functions_info() {
  * Replace the cell by the group sequence number (resulting table row number).
  *
  * @param array $groups
- * @param object $field_handler, not used
- * @param int $start_value, # at which to start the sequence, defaults to 1
+ *   An array of groups of rows, each group indexed by group value.
+ * @param object $field_handler
+ *   Not used.
+ * @param int $start_value
+ *   Number at which to start the sequence, defaults to 1.
+ *
  * @return values
+ *   An array of values, one for each group and one for the column.
  */
 function views_aggregator_group_seq_number($groups, $field_handler = NULL, $start_value = NULL) {
   $values = array();
   $count = (!isset($start_value) || $start_value == '') ? 1 : (int) $start_value;
   foreach ($groups as $group => $rows) {
-    $values[$group] = $count++;
+    $values['column'] = $values[$group] = $count++;
   }
+  return $values;
+}
+
+/**
+ * Aggregates a field group total as the percentage of the column total.
+ *
+ * @param array $groups
+ *   An array of groups of rows, each group indexed by group value.
+ * @param object $field_handler
+ *   The handler for the view column to calculate percentages in.
+ *
+ * @return array
+ *   An array of values, one for each group and one for the column
+ *   (always 100%).
+ */
+function views_aggregator_percentage($groups, $field_handler, $arg_group, $arg_column) {
+  $values = array();
+  $sum_column = 0.0;
+  foreach ($groups as $group => $rows) {
+    $sum = 0.0;
+    foreach ($rows as $num => $row) {
+      // Do not count empty or non-numeric cells.
+      $cell = vap_num(views_aggregator_get_cell($field_handler, $num, FALSE));
+      if ($cell !== FALSE) {
+        $sum += $cell;
+      }
+    }
+    $values[$group] = $sum;
+    $sum_column += $sum;
+  }
+  foreach ($groups as $group => $rows) {
+    $values[$group] = ($sum_column == 0.0) ? '' : 100 * $values[$group] / $sum_column;
+  }
+  $values['column'] = 100;
   return $values;
 }

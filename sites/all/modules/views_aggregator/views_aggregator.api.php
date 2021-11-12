@@ -20,12 +20,12 @@ function hook_views_aggregation_functions_info() {
   $functions = array(
     'views_aggregator_variance' => array(
       'group' => t('Variance'),
-      'column' => t('Variance'), // use NULL if not applicable
+      'column' => t('Variance'), // Use NULL if not applicable.
 
       // If your function operates on a numeric field, but the result is no
       // longer a (single) number, for example when enumerating values, then the
       // original renderer is not appropriate. In that case set this to FALSE.
-      'is_renderable' => TRUE, // this is the default
+      'is_renderable' => TRUE, // This is the default.
     ),
   );
   return $functions;
@@ -35,7 +35,7 @@ function hook_views_aggregation_functions_info() {
  * Alter existing aggregation functions.
  *
  * @param array $aggregation_functions
- *   the aggregation functions currently defined
+ *   The aggregation functions currently defined.
  */
 function hook_views_aggregation_functions_info_alter($aggregation_functions) {
 }

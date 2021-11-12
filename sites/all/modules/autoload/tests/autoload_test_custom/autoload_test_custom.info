@@ -1,0 +1,27 @@
+name = Autolaod Custom Test
+description = Testing autoloading of custom namespaces.
+hidden = TRUE
+core = 7.x
+
+; Wrong declaration!
+autoload = Autoload
+; Try PSR-0 standard.
+autoload[psr-0][] = Autoload
+; Try PSR-4 standard.
+autoload[psr-4][] = Autoload\Tests
+; Try PSR-4 standard with single-leveled namespace defined.
+autoload[psr-4-single-level-namespace][] = AutoloadTests\
+; Try to fail autoloading in the same namespace but in another directory.
+; @see https://www.drupal.org/node/2783081
+autoload[tests][] = Autoload\Tests\Example
+autoload[wrong-namespace][] = Autoload\WrongNamespace
+; Wrong declaration!
+autoload[] = Autoload
+
+dependencies[] = autoload
+
+; Information added by Drupal.org packaging script on 2018-05-05
+version = "7.x-2.0"
+core = "7.x"
+project = "autoload"
+datestamp = "1525516690"

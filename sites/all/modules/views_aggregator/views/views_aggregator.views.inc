@@ -17,7 +17,7 @@ function views_aggregator_views_plugins() {
     // 'theme' name implies views-aggregator-results-table.tpl.php
     // and template_preprocess_views_aggregator_results_table($vars)
     'theme' => 'views_aggregator_results_table',
-    // 'theme path' applies to .tpl.php and 'theme file', unless overriden
+    // 'theme path' applies to .tpl.php and 'theme file', unless overridden
     // by hook_theme().
     'theme path' => $base_path . '/views',
     // 'theme file' => 'theme_views_aggregator_plugin_style_table.inc',

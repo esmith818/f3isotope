@@ -14,9 +14,6 @@ function views_send_send_from_spool() {
   $limit = variable_get('views_send_throttle', 20);
   $ok = $fail = $check = 0;
 
-  // Get PHP maximum execution time. 30 seconds default.
-  $max_execution_time = ini_get('max_execution_time') ? ini_get('max_execution_time') : VIEWS_SEND_MAX_EXECUTION_TIME;
-
   // Reset a Drupal timer.
   timer_start('views_send');
 
@@ -52,7 +49,7 @@ function views_send_send_from_spool() {
       $check = 0;
 
       // Break if exceded.
-      if (timer_read('views_send') / 1000 > .8 * $max_execution_time) {
+      if (timer_read('views_send') / 1000 > .8 * ini_get('max_execution_time')) {
         watchdog('views_send', 'PHP maximum execution time almost exceeded. Remaining e-mail messages will be sent during the next cron run. If this warning occurs regularly you should reduce the cron throttle setting.', NULL, WATCHDOG_WARNING);
         break;
       }

@@ -76,7 +76,7 @@ function views_aggregator_views_aggregation_functions_info() {
     ),
     'views_aggregator_tally' => array(
       'group' => t('Tally members *'),
-      'column' => NULL, // @todo t('Tally members *'),
+      'column' => NULL, // @todo t('Tally members *').
       'is_renderable' => FALSE,
     ),
     // This one is probably best last, because of token replacement.
@@ -94,14 +94,14 @@ function views_aggregator_views_aggregation_functions_info() {
  * Matching takes place on the raw values (1000, rather than "$ 1,000").
  *
  * @param object $views_plugin_style
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to count groups members in
+ *   The handler for the view column to count groups members in.
  * @param string $regexp
- *   if empty all result rows are kept
+ *   If empty all result rows are kept.
  *
  * @return array
- *   a subset of the original array of groups
+ *   A subset of the original array of groups.
  */
 function views_aggregator_row_filter($views_plugin_style, $field_handler, $regexp = NULL) {
   if (empty($regexp)) {
@@ -128,14 +128,14 @@ function views_aggregator_row_filter($views_plugin_style, $field_handler, $regex
  * functions.
  *
  * @param object $view_results
- *   the result rows as they appear on the view object
+ *   The result rows as they appear on the view object.
  * @param object $field_handler
- *   the handler for the view column to group rows on
+ *   The handler for the view column to group rows on.
  * @param string $case
- *   whether group-inclusion is case-sensitive (the default)
+ *   Whether group-inclusion is case-sensitive (the default).
  *
  * @return array
- *   an array of groups, keyed by group value first and row number second.
+ *   An array of groups, keyed by group value first and row number second.
  */
 function views_aggregator_group_and_compress($view_results, $field_handler, $case = 'case-sensitive') {
   $groups = array();
@@ -169,7 +169,7 @@ function views_aggregator_group_and_compress($view_results, $field_handler, $cas
           $first_row = $row;
         }
         else {
-          foreach ((array)$row as $field_name => $cell) {
+          foreach ((array) $row as $field_name => $cell) {
             if ($field_name != '_field_data' && $cell == $first_row->{$field_name}) {
               unset($row->{$field_name});
             }
@@ -185,16 +185,16 @@ function views_aggregator_group_and_compress($view_results, $field_handler, $cas
  * Aggregates a field group as the average amongst its members.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to find the minimum in
+ *   The handler for the view column to find the average in.
  * @param int $precision_group
- *   the number of decimals, if specified
+ *   The number of decimals, if specified.
  * @param int $precision_column
- *   the number of decimals, if specified
+ *   The number of decimals, if specified.
  *
  * @return array
- *   an array of values, one for each group and one for the column.
+ *   An array of values, one for each group and one for the column.
  */
 function views_aggregator_average($groups, $field_handler, $precision_group, $precision_column) {
   $values = array();
@@ -225,16 +225,16 @@ function views_aggregator_average($groups, $field_handler, $precision_group, $pr
  * Aggregates a field group as a count of the number of group members.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to count groups members in
+ *   The handler for the view column to count groups members in.
  * @param string $group_regexp
- *   an optional regexp to count, if omitted all non-empty group values count
+ *   An optional regexp to count, if omitted all non-empty group values count.
  * @param string $column_regexp
- *   an optional regexp to count, if omitted all non-empty group values count
+ *   An optional regexp to count, if omitted all non-empty group values count.
  *
  * @return array
- *   an array of values, one for each group and one for the column
+ *   An array of values, one for each group and one for the column.
  */
 function views_aggregator_count($groups, $field_handler, $group_regexp = NULL, $column_regexp = NULL) {
   $values = array();
@@ -265,16 +265,16 @@ function views_aggregator_count($groups, $field_handler, $group_regexp = NULL, $
  * The enumeration is sorted "naturally" and duplicates are removed.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to find members of the group
+ *   The handler for the view column to find members of the group.
  * @param string $separator_group
- *   the separator to use in group enumerations, defaults to '<br/>'
+ *   The separator to use in group enumerations, defaults to '<br/>'.
  * @param string $separator_column
- *   the separator to use for the column enumeration, defaults to '<br/>'
+ *   The separator to use for the column enumeration, defaults to '<br/>'.
  *
  * @return array
- *   an array of values, one for each group.
+ *   An array of values, one for each group.
  */
 function views_aggregator_enumerate($groups, $field_handler, $separator_group, $separator_column) {
   return _views_aggregator_enumerate($groups, $field_handler, $separator_group, $separator_column, TRUE, FALSE);
@@ -283,19 +283,19 @@ function views_aggregator_enumerate($groups, $field_handler, $separator_group, $
 /**
  * Aggregates a field group as the enumeration of its members.
  *
- * The enumeration retains the orignal order and does not remove duplicates.
+ * The enumeration retains the original order and does not remove duplicates.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to find members of the group
+ *   The handler for the view column to find members of the group.
  * @param string $separator_group
- *   the separator to use in group enumerations, defaults to '<br/>'
+ *   The separator to use in group enumerations, defaults to '<br/>'.
  * @param string $separator_column
- *   the separator to use for the column enumeration, defaults to '<br/>'
+ *   The separator to use for the column enumeration, defaults to '<br/>'.
  *
  * @return array
- *   an array of values, one for each group.
+ *   An array of values, one for each group.
  */
 function views_aggregator_enumerate_raw($groups, $field_handler, $separator_group, $separator_column) {
   return _views_aggregator_enumerate($groups, $field_handler, $separator_group, $separator_column, FALSE, TRUE);
@@ -305,20 +305,20 @@ function views_aggregator_enumerate_raw($groups, $field_handler, $separator_grou
  * Aggregates a field group as the enumeration of its members.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to find members of the group
+ *   The handler for the view column to find members of the group.
  * @param string $separator_group
- *   the separator to use in group enumerations, defaults to '<br/>'
+ *   The separator to use in group enumerations, defaults to '<br/>'.
  * @param string $separator_column
- *   the separator to use for the column enumeration, defaults to '<br/>'
+ *   The separator to use for the column enumeration, defaults to '<br/>'.
  * @param bool $sort
- *   whether or not to sort the enumeration
+ *   Whether or not to sort the enumeration.
  * @param bool $allow_duplicates
- *   whether or not to remoe duplicates from the enumeration
+ *   Whether or not to remoe duplicates from the enumeration.
  *
  * @return array
- *   an array of values, one for each group.
+ *   An array of values, one for each group.
  */
 function _views_aggregator_enumerate($groups, $field_handler, $separator_group, $separator_column, $sort = TRUE, $allow_duplicates = FALSE) {
   $separator_group = empty($separator_group) ? '<br/>' : $separator_group;
@@ -359,16 +359,16 @@ function _views_aggregator_enumerate($groups, $field_handler, $separator_group, 
  * Aggregates a field in the column aggregation row as a math. expression.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to evaluate the expression for
+ *   The handler for the view column to evaluate the expression for.
  * @param string $group_exp
- *   currently not supported
+ *   Currently not supported.
  * @param string $column_exp
- *   an optional regexp to count, if omitted all non-empty group values count
+ *   An optional regexp to count, if omitted all non-empty group values count.
  *
  * @return array
- *   an array of values, one for each group and one for the column
+ *   An array of values, one for each group and one for the column.
  */
 function views_aggregator_expression($groups, $field_handler, $group_exp = NULL, $column_exp = NULL) {
   $values = array();
@@ -389,7 +389,7 @@ function views_aggregator_expression($groups, $field_handler, $group_exp = NULL,
       $value = $math->evaluate($expression);
     }
   }
-  // Should we call number_format($value, $precision, $decimal, $separator)
+  // Should we call: number_format($value, $precision, $decimal, $separator) ?
   $values['column'] = $value;
   return $values;
 }
@@ -398,12 +398,12 @@ function views_aggregator_expression($groups, $field_handler, $group_exp = NULL,
  * Aggregates a field group as the first member of the group.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to find the first group member in
+ *   The handler for the view column to find the first group member in.
  *
  * @return array
- *   an empty array
+ *   An empty array.
  */
 function views_aggregator_first($groups, $field_handler) {
   // This is the default operation, so nothing to do, except for Webforms.
@@ -423,12 +423,12 @@ function views_aggregator_first($groups, $field_handler) {
  * Using numbers mixed with non-numeric strings is not recommended.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to find the maximum groups member in
+ *   The handler for the view column to find the maximum groups member in.
  *
  * @return array
- *   an array of values, one for each group, plus the 'column' group
+ *   An array of values, one for each group, plus the 'column' group.
  */
 function views_aggregator_maximum($groups, $field_handler) {
   $values = array();
@@ -467,12 +467,12 @@ function views_aggregator_maximum($groups, $field_handler) {
  * job of dealing with the median of a group/column of strings.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to calculate the median for
+ *   The handler for the view column to calculate the median for.
  *
  * @return array
- *   an array of values, one for each group, plus the 'column' group
+ *   An array of values, one for each group, plus the 'column' group.
  */
 function views_aggregator_median($groups, $field_handler) {
   $values = array();
@@ -488,13 +488,13 @@ function views_aggregator_median($groups, $field_handler) {
     }
     if (!empty($group_cells)) {
       sort($group_cells);
-      $m = (int)(count($group_cells) / 2);
+      $m = (int) (count($group_cells) / 2);
       $values[$group] = vap_num($group_cells[$m]) === FALSE || count($group_cells) % 2 ? $group_cells[$m] : ($group_cells[$m] + $group_cells[$m - 1]) / 2;
     }
   }
   if (!empty($column_cells)) {
     sort($column_cells);
-    $m = (int)(count($column_cells) / 2);
+    $m = (int) (count($column_cells) / 2);
     $values['column'] = vap_num($column_cells[$m]) === FALSE || count($column_cells) % 2 ? $column_cells[$m] : ($column_cells[$m] + $column_cells[$m - 1]) / 2;
   }
   return $values;
@@ -504,12 +504,12 @@ function views_aggregator_median($groups, $field_handler) {
  * Aggregates a field group as the minimum across its members.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to find the minimum groups member in
+ *   The handler for the view column to find the minimum groups member in.
  *
  * @return array
- *   an array of values, one for each group, plus the 'column' group
+ *   An array of values, one for each group, plus the 'column' group.
  */
 function views_aggregator_minimum($groups, $field_handler) {
   $values = array();
@@ -518,7 +518,7 @@ function views_aggregator_minimum($groups, $field_handler) {
     $minimum = NULL;
     foreach ($rows as $num => $row) {
       $value = views_aggregator_get_cell($field_handler, $num, FALSE);
-      // Ignore empty strings
+      // Ignore empty strings.
       if (isset($value) && trim($value) != '') {
         if ($is_first) {
           $minimum = $value;
@@ -546,15 +546,15 @@ function views_aggregator_minimum($groups, $field_handler) {
  * Aggregates a field group as a range. Example: 5.5 - 14.9.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column
+ *   The handler for the view column.
  * @param string $separator_group
- *   the range separator between minimum and maximum values of the group range,
- *   not used here
- * @param string $separator_group
- *   the range separator between minimum and maximum values of the column range,
- *   not used here
+ *   The range separator between minimum and maximum values of the group range,
+ *   not used here.
+ * @param string $separator_column
+ *   The range separator between minimum and maximum values of the column range,
+ *   not used here.
  *
  * @return array
  *   An array of ranges, one for each group and one for the 'column'.
@@ -594,16 +594,16 @@ function views_aggregator_range($groups, $field_handler, $separator_group = NULL
  * Aggregates a field group as a word, phrase or number.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column
+ *   The handler for the view column.
  * @param string $replace_text
- *   an optional parameter, specifying the replacement text to use
+ *   An optional parameter, specifying the replacement text to use.
  * @param string $column_label
- *   an optional parameter, specifying a label placed the bottom of the column
+ *   An optional parameter, specifying a label placed the bottom of the column.
  *
  * @return array
- *   an array of values, one for each group and one for the 'column'
+ *   An array of values, one for each group and one for the 'column'.
  */
 function views_aggregator_replace($groups, $field_handler, $replace_text = NULL, $column_label = NULL) {
   $values = array();
@@ -628,12 +628,12 @@ function views_aggregator_replace($groups, $field_handler, $replace_text = NULL,
  * Aggregates a field group as the sum of its members.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to sum groups in
+ *   The handler for the view column to sum groups in.
  *
  * @return array
- *   an array of values, one for each group, plus the 'column' group
+ *   An array of values, one for each group, plus the 'column' group.
  */
 function views_aggregator_sum($groups, $field_handler) {
   $values = array();
@@ -657,16 +657,17 @@ function views_aggregator_sum($groups, $field_handler) {
  * Aggregates a field group as the tally of its members.
  *
  * @param array $groups
- *   an array of groups of rows, each group indexed by group value
+ *   An array of groups of rows, each group indexed by group value.
  * @param object $field_handler
- *   the handler for the view column to find members of the group
+ *   The handler for the view column to find members of the group.
  * @param string $separator_group
- *   the separator to use between tallies in a group, defaults to '<br/>'
+ *   The separator to use between tallies in a group, defaults to '<br/>'.
  * @param string $separator_column
- *   the separator to use between tallies in the totals field, defaults to '<br/>'
+ *   The separator to use between tallies in the totals field, defaults to
+ *   '<br/>'.
  *
  * @return array
- *   an array of values, one for each group
+ *   An array of values, one for each group.
  */
 function views_aggregator_tally($groups, $field_handler, $separator_group, $separator_column) {
   $separator_group = empty($separator_group) ? '<br/>' : $separator_group;
@@ -717,6 +718,7 @@ function views_aggregator_tally($groups, $field_handler, $separator_group, $sepa
  * Scientific notation, e.g., 1.23E-45, is NOT supported, it will return 1.23
  *
  * @param string $string
+ *   A string representatin of a double-precision floating point number.
  *
  * @return mixed
  *   Returns double or FALSE, if no number could be found in the string.
@@ -724,5 +726,5 @@ function views_aggregator_tally($groups, $field_handler, $separator_group, $sepa
 function vap_num($string) {
   // Strip out any spaces and thousand makers.
   $stripped = str_replace(array(' ', ','), '', $string);
-  return preg_match('/[-+]?\d*\.?\d+/', $stripped, $matches) ? (double)$matches[0] : FALSE;
+  return preg_match('/[-+]?\d*\.?\d+/', $stripped, $matches) ? (double) $matches[0] : FALSE;
 }
